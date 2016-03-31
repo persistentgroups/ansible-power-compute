@@ -1,0 +1,39 @@
+---
+- name: prerequisite role for installing openstack service
+  hosts: compute
+  any_errors_fatal: true
+  gather_facts: true
+  roles:
+    - role: common
+      tags: ['common']
+  environment: "{{ env_vars|default({}) }}"
+
+
+- name: openstack client tools
+  hosts: compute
+  any_errors_fatal: true
+  roles:
+    - role: client
+      tags: ['openstack', 'client']
+  environment: "{{ env_vars|default({}) }}"
+
+- name: nova data plane
+  gather_facts: true
+  hosts: compute
+  any_errors_fatal: true
+  vars:
+    primary_interface: 'ansible_eth0'
+  roles:
+    - role: nova-data
+      tags: ['openstack', 'nova', 'data']
+  environment: "{{ env_vars|default({}) }}"
+
+- name: neutron core data plane
+  gather_facts: true
+  hosts: compute
+  any_errors_fatal: true
+  roles:
+    - role: neutron-data
+      tags: ['openstack', 'neutron', 'data']
+  environment: "{{ env_vars|default({}) }}"
+

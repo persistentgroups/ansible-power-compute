@@ -1,0 +1,59 @@
+---
+- name: custom CA cert directory
+  file: dest=/usr/local/share/ca-certificates state=directory
+
+- name: (possibly self-signed) ssl cert
+  template: src=openstack.crt
+            dest=/usr/local/share/ca-certificates/{{ endpoints.main }}.crt
+  notify: refresh CAs
+
+- name: Install any additional CA certificates
+  copy:
+    content: "{{ item.content | default(omit) }}"
+    dest: "/usr/local/share/ca-certificates/{{ item.name }}.crt"
+    src: "{{ item.src | default(omit) }}"
+  with_items: "{{ ssl.extracacerts | default([]) }}"
+  notify: refresh CAs
+
+- name: ssl directory
+  file: dest=/opt/stack/ssl state=directory
+
+- name: install openstack SSL cert
+  template:
+    src: openstack.crt
+    dest: /opt/stack/ssl/openstack.crt
+    mode: 0644
+  tags:
+    - cert
+
+# ugly hack: some python http libs don't honor the system ca-certs, and ship with
+# their own list, instead.
+# pre-install these client libs, and force them to use the system cert list.
+- name: pip install httplib2 - precise
+  pip: name=httplib2 version=0.8
+  when: ansible_distribution_version == "12.04"
+
+- name: pip install requests - precise
+  pip: name=requests state=latest
+  when: ansible_distribution_version == "12.04"
+
+- name: force our ssl cert for python libs on precise
+  file: src=/etc/ssl/certs/ca-certificates.crt dest={{ item }} owner=root
+        mode=0644 state=link force=yes
+  with_items:
+    - /usr/share/pyshared/httplib2/cacerts.txt
+    - /usr/local/lib/python2.7/dist-packages/httplib2/cacerts.txt
+    - /usr/local/lib/python2.7/dist-packages/requests/cacert.pem
+  when: ansible_distribution_version == "12.04"
+
+- name: httplib2 and request Python modules that already use system CA certs
+  apt: pkg={{ item }}
+  with_items:
+    - python-httplib2
+    - python-requests
+  when: ansible_distribution_version == "14.04"
+
+- meta: flush_handlers
+
+- name: update ca certificates
+  command: update-ca-certificates

@@ -1,0 +1,132 @@
+---
+- name: install neutron-data-network packages
+  apt: pkg={{ item }}
+  with_items:
+    - dnsmasq
+    - dnsmasq-utils
+    - iputils-arping
+    - ucarp
+    - radvd
+    - resolvconf
+
+- name: install packages for l3ha
+  apt: pkg={{ item }}
+  with_items:
+    - keepalived
+    - conntrackd
+  when: neutron.l3ha.enabled|bool
+
+- include: dnsmasq.yml
+
+- include: igmp-router.yml
+  when: neutron.plugin == 'ml2' and 'vxlan' in neutron.tunnel_types and not neutron.l2_population
+
+- name: assert kernel supports vxlan
+  command: modinfo -F version vxlan
+  changed_when: false
+  when: "'vxlan' in neutron.tunnel_types"
+
+- name: assert iproute2 supports vxlan
+  command: ip link add type vxlan help
+  register: iproute_out
+  changed_when: false
+  failed_when: iproute_out.rc == 255
+  when: "'vxlan' in neutron.tunnel_types"
+
+- name: install neutron-data-network services
+  upstart_service:
+    name: "{{ item.key }}"
+    user: neutron
+    cmd: "/usr/local/bin/{{ item.key }}"
+    pidfile: "{{ item.value.pidfile|default(omit) }}"
+    start_on: "starting neutron-linuxbridge-agent"
+    stop_on: "stopping neutron-linuxbridge-agent"
+    config_dirs: /etc/neutron
+    config_files: /etc/neutron/neutron.conf,{{ item.value.config_files }}
+    envs: "{{ neutron.service.envs }}"
+  with_dict:
+    neutron-dhcp-agent:
+      config_files: /etc/neutron/dhcp_agent.ini
+    neutron-l3-agent:
+      config_files: /etc/neutron/l3_agent.ini
+      pidfile: /var/run/enutron-l3-agent.pid
+    neutron-metadata-agent:
+      config_files: /etc/neutron/metadata_agent.ini
+
+- name: neutron lbaas config
+  template:
+    src: etc/neutron/neutron_lbaas.conf
+    dest: /etc/neutron/neutron_lbaas.conf
+    mode: 0644
+  when: (neutron.lbaas.enable == "smart" and
+         groups['controller'][0] not in groups['compute']) or
+         neutron.lbaas.enable|bool
+  notify:
+    - restart neutron lbaas agent
+
+- name: neutron lbaas agent config
+  template:
+    src: etc/neutron/services/loadbalancer/haproxy/lbaas_agent.ini
+    dest: /etc/neutron/services/loadbalancer/haproxy
+    mode: 0644
+  when: (neutron.lbaas.enable == "smart" and
+         groups['controller'][0] not in groups['compute']) or
+         neutron.lbaas.enable|bool
+  notify:
+    - restart neutron lbaas agent
+
+- name: install neutron lbaas service
+  upstart_service:
+    name: "{{ item.key }}"
+    user: neutron
+    cmd: "/usr/local/bin/{{ item.key }}"
+    pidfile: "{{ item.value.pidfile|default(omit) }}"
+    start_on: "starting neutron-linuxbridge-agent"
+    stop_on: "stopping neutron-linuxbridge-agent"
+    config_dirs: /etc/neutron
+    config_files: "{{ item.value.config_files|join(',') }}"
+    envs: "{{ neutron.service.envs }}"
+  when: (neutron.lbaas.enable == "smart" and
+         groups['controller'][0] not in groups['compute']) or
+         neutron.lbaas.enable|bool
+  with_dict:
+    neutron-lbaasv2-agent:
+      config_files:
+        - /etc/neutron/neutron.conf
+        - /etc/neutron/services/loadbalancer/haproxy/lbaas_agent.ini
+        - /etc/neutron/neutron_lbaas.conf
+
+- name: kill namespaced neutron processes on upgrade
+  command: pkill -f {{ item }}
+  failed_when: False
+  when: (project_package.changed or git_result.changed) and
+        upgrade | default('False') | bool
+  with_items:
+    - neutron-keepalived-state-change
+    - neutron-ns-metdata-proxy
+
+- name: trigger restart on upgrades
+  debug:
+    msg: "Triggering service restart for upgrade"
+  changed_when: True
+  notify: restart neutron services
+  when: (project_package.changed or git_result.changed) and
+        upgrade | default('False') | bool
+
+- meta: flush_handlers
+
+- name: start neutron-data-network services
+  service: name={{ item }} state=started
+  with_items:
+    - neutron-l3-agent
+    - neutron-dhcp-agent
+    - neutron-metadata-agent
+
+- name: start neutron lbaas agent
+  service: name=neutron-lbaasv2-agent state=started
+  when: (neutron.lbaas.enable == "smart" and
+         groups['controller'][0] not in groups['compute']) or
+         neutron.lbaas.enable|bool
+
+- include: ipchanged.yml
+

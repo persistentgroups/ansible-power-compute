@@ -1,0 +1,17 @@
+---
+client:
+  write_stackrc: True
+  self_signed_cert: false
+  names:
+    - python-keystoneclient
+    - python-glanceclient>=1.1.0
+    - python-novaclient<2.27.0
+    - python-neutronclient<4.0.0
+    - python-cinderclient
+    - python-heatclient
+    - python-ceilometerclient
+    - python-ironicclient
+    - python-swiftclient
+    - python-magnumclient
+  apt_packages:
+    - python-prettytable

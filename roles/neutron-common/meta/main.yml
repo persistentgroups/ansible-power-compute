@@ -1,0 +1,19 @@
+---
+dependencies:
+  - role: endpoints
+  - role: apt-repos
+    service: neutron
+    logdata: "{{ neutron.logs }}"
+  - role: openstack-source
+    project_name: neutron
+    project_rev: "{{ neutron.source.rev }}"
+    rootwrap: True
+    alternatives: "{{ neutron.alternatives }}"
+    system_dependencies: "{{ neutron.source.system_dependencies }}"
+    python_dependencies: "{{ neutron.source.python_dependencies }}"
+    when: openstack_install_method == 'source'
+  - role: openstack-package
+    project_name: neutron
+    rootwrap: True
+    alternatives: "{{ neutron.alternatives }}"
+    when: openstack_install_method == 'package'

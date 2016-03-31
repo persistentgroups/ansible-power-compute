@@ -1,0 +1,91 @@
+---
+- name: set hostname
+  hostname: name={{ hostname }}
+  when: hostname is defined
+
+- name: ubuntu apt source list
+  template: src=etc/apt/sources.list dest=/etc/apt/sources.list
+  when: openstack.ubuntu_mirror is defined
+  notify:
+    - update apt index
+
+- meta: flush_handlers
+
+- name: update apt index
+  apt: update_cache=yes cache_valid_time=3600
+  tags: ['prereboot']
+
+- include: system-tools.yml
+
+- name: python dependencies
+  apt: pkg={{ item }}
+  with_items:
+    - python-pip
+    - python-libxml2
+    - python-lxml
+    - python-greenlet
+    - python-openssl
+    - python2.7-dev
+    - python-httplib2
+    - python-software-properties
+    - python-virtualenv
+    - python-mysqldb
+    - python-jinja2
+    - cryptsetup
+    - libffi-dev
+    - libssl-dev
+    - libxml2-dev
+    - libxslt1-dev
+
+- include: python.yml
+  tags: pip, python
+
+- include: ruby.yml
+  tags: ruby
+
+- name: set UTC timezone
+  template: src=etc/timezone dest=/etc/timezone owner=root group=root mode=0644
+  notify:
+    - update timezone
+
+- name: state path base directory
+  file: dest={{ state_path_base }} state=directory
+
+- include: ssl.yml
+  tags: ssl
+
+- include: ssh.yml
+
+- include: networking.yml
+
+- include: password-policy.yml
+
+- include: system-file-permissions.yml
+
+- include: ufw.yml
+  tags: ufw
+
+- include: ntp.yml
+  tags: ntp
+
+# Include serial console before kernel-tuning to build serial_console_cmdline
+- include: serial-console.yml tty={{ common.serial_console.name }}
+  when: common.serial_console.enabled | bool
+  tags: ['prereboot']
+
+- include: kernel-tuning.yml
+  tags: ['prereboot']
+
+- include: disable-swap.yml
+
+- name: remove unwanted packages
+  apt:
+    name: "{{ item }}"
+    state: absent
+  with_items: "{{ common.packages_to_remove }}"
+
+
+- name: include stack name in /etc/issue
+  lineinfile: dest=/etc/issue regexp="^{{ stack_env }} OpenStack Node" line="{{ stack_env }} OpenStack Node"
+
+

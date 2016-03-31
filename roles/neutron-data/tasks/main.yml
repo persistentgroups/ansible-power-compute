@@ -1,0 +1,50 @@
+---
+- name: install required packages and diagnostic tools
+  apt: name={{ item }}
+  with_items:
+  - bwm-ng
+  - ipset
+
+- name: update iproute2 to latest ppa
+  apt: name=iproute2 state=latest
+
+- name: permit VXLAN traffic
+  ufw: rule=allow to_port=4789 proto=udp
+  tags: ufw
+  when: neutron.plugin == 'ml2' and 'vxlan' in neutron.tunnel_types
+
+- name: ml2 dataplane config
+  template: src=etc/neutron/plugins/ml2/ml2_plugin_dataplane.ini
+            dest=/etc/neutron/plugins/ml2/ml2_plugin_dataplane.ini
+            mode=0644
+  when: neutron.plugin == 'ml2'
+  notify:
+    - restart neutron services
+
+- name: install neutron-linuxbridge-agent service
+  upstart_service: name=neutron-linuxbridge-agent
+                   user=neutron
+                   cmd=/usr/local/bin/neutron-linuxbridge-agent
+                   config_dirs=/etc/neutron
+                   config_files=/etc/neutron/neutron.conf,/etc/neutron/plugins/ml2/ml2_plugin.ini,/etc/neutron/plugins/ml2/ml2_plugin_dataplane.ini
+  when: neutron.plugin == 'ml2'
+
+- name: trigger restart on upgrades
+  debug:
+    msg: "Triggering service restart for upgrade"
+  changed_when: True
+  notify: restart neutron services
+  when: (project_package.changed or git_result.changed) and
+        upgrade | default('False') | bool
+
+- meta: flush_handlers
+
+- name: start neutron-linuxbridge-agent
+  service: name=neutron-linuxbridge-agent state=started
+  when: neutron.plugin == 'ml2'
+
+- name: cleanup interface logs
+  template: src=etc/cron.daily/cleanup-neutron-interfaces
+            dest=/etc/cron.daily/cleanup-neutron-interfaces
+            mode=0755 owner=root
+

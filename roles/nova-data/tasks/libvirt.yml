@@ -1,0 +1,113 @@
+---
+# Ensure this file is written before kvm_intel or kvm_amd module is loaded
+- name: enable nested kvm
+  template: src=etc/modprobe.d/kvm-nested.conf
+            dest=/etc/modprobe.d/kvm-nested.conf owner=root group=root
+            mode=0644
+
+- name: install nova-compute packages
+  apt: pkg={{ item }}
+  with_items:
+    - cpu-checker
+    - libvirt-bin={{ nova.libvirt_bin_version }}
+    - python-libvirt={{ nova.python_libvirt_version }}
+    - qemu-kvm={{ nova.qemu_kvm_version }}
+    - librbd1={{ nova.librdb1_version }}
+    - open-iscsi
+    - libvirt-dev={{ nova.libvirt_bin_version }}
+    - pkg-config
+    - genisoimage
+    - util-linux
+  notify: restart nova services
+  when: ansible_distribution_version == "12.04"
+
+- name: install nova-compute packages (trusty)
+  apt: pkg={{ item }}
+  with_items:
+    - cpu-checker
+    - libvirt-bin
+    - python-libvirt
+    - qemu-kvm
+    - open-iscsi
+    - libvirt-dev
+    - pkg-config
+    - genisoimage
+    - util-linux
+  notify: restart nova services
+  when: ansible_distribution_version == "14.04"
+
+# We want to be sure that libvirt python
+# modules are built against the libvirt running on the host, so build
+# this part of the virtualenv on the system itself
+# # This is done with command rather than pip due to a bug where the venv
+# # would get re-created on this task, breaking things badly. pip module
+# # needs to be fixed first.
+- name: install libvirt-python in package venv
+  command: "{{ 'nova'|openstack_package_path(openstack_package_version) }}/bin/pip install libvirt-python"
+  register: lvpout
+  changed_when: lvpout.stdout|search("Successfully installed")
+  notify: restart nova services
+  when: openstack_install_method == 'package'
+
+- name: install libvirt-python in source venv
+  command: "{{ openstack_source.virtualenv_base }}/nova/bin/pip install libvirt-python"
+  register: lvpout
+  changed_when: lvpout.stdout|search("Successfully installed")
+  notify: restart nova services
+  when: openstack_install_method == 'source'
+
+- name: delete lines in libvirtd.conf
+  lineinfile:
+    dest: /etc/libvirt/libvirtd.conf
+    regexp: "{{ item.value.regexp }}"
+    line: "{{ item.value.line }}"
+    state: absent
+  with_dict:
+    listen_tcp:
+      regexp: '^listen_tcp\s*='
+      line: "listen_tcp = 1"
+    auth_tcp:
+      regexp: '^auth_tcp\s*='
+      line: 'auth_tcp = \"none\"'
+  notify: restart libvirt-bin
+
+- name: add/update various lines in libvirtd.conf
+  lineinfile:
+    dest: /etc/libvirt/libvirtd.conf
+    regexp: "{{ item.value.regexp }}"
+    line: "{{ item.value.line }}"
+  with_dict:
+    listen_tls:
+      regexp: '^listen_tls\s*='
+      line: "listen_tls = 0"
+  notify: restart libvirt-bin
+
+- name: remove libvirtd defaults
+  lineinfile:
+    dest: /etc/default/libvirt-bin
+    regexp: '^libvirtd_opts\s*='
+    line: 'libvirtd_opts=\"-d -l\"'
+    state: absent
+  notify: restart libvirt-bin
+
+- name: update qemu migration option
+  lineinfile:
+    dest: /etc/libvirt/qemu.conf
+    regexp: '^allow_incoming_qemukvm\s*='
+    line: 'allow_incoming_qemukvm = 1'
+  notify: restart libvirt-bin
+
+- name: ensure kvm is supported by cpu and enabled in bios
+  command: kvm-ok
+  when: "'{{ nova.libvirt_type }}' == 'kvm'"
+  changed_when: False
+
+- name: shutdown default libvirt network if started
+  shell: ip addr show virbr0 && virsh net-destroy default
+  failed_when: False
+
+- name: disable libvirt default network autostart
+  file: dest=/etc/libvirt/qemu/networks/autostart/default.xml state=absent
+
+- name: add nova to the libvirtd group
+  user: name=nova groups=libvirtd append=true system=yes createhome=no

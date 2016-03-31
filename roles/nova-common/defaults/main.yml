@@ -1,0 +1,124 @@
+---
+nova:
+  patches:
+  compute_driver: nova.virt.libvirt.LibvirtDriver
+  firewall_driver: nova.virt.firewall.NoopFirewallDriver
+  scheduler_host_manager: nova.scheduler.host_manager.HostManager
+  compute_manager: nova.compute.manager.ComputeManager
+  api_workers: 5
+  conductor_workers: 5
+  metadata_api_workers: 5
+  ec2_workers: 5
+  cpu_allocation_ratio: 1.0
+  ram_allocation_ratio: 1.0
+  libvirt_cpu_model: null
+  libvirt_type: kvm
+  enable_ssh: False
+  novnc_method: git
+  novnc_repo: https://github.com/kanaka/noVNC.git
+  novnc_rev: 292f6a5d
+  novnc_url: https://github.com/kanaka/noVNC/archive/v0.5.1.tar.gz
+  scheduler_default_filters: RetryFilter,AvailabilityZoneFilter,RamFilter,ComputeFilter,CoreFilter,ComputeCapabilitiesFilter,ImagePropertiesFilter,ServerGroupAntiAffinityFilter,ServerGroupAffinityFilter,AggregateInstanceExtraSpecsFilter,DiskFilter
+  libvirt_bin_version: 1.2.2-0ubuntu13.1.9~cloud0
+  python_libvirt_version: 1.2.2-0ubuntu2~cloud0
+  qemu_kvm_version: 2.0.0+dfsg-2ubuntu1.16~cloud0
+  librdb1_version: 0.80.9-0ubuntu0.14.04.2~cloud0
+  glance_endpoint: http://{{ endpoints.main }}:9393
+  reserved_host_disk_mb: 51200
+  controller_reserve_ram: 4096
+  compute_reserve_ram: 2048
+  preallocate_images: space
+  floating_pool: external
+  state_path: "{{ state_path_base }}/nova"
+  block_device_allocate_retries: 200
+  block_device_allocate_retries_interval: 3
+  heartbeat_timeout_threshold: 30
+  default_availability_zone: nova
+  install_packages:
+    - python-numpy
+    - virt-top
+  driver:
+    docker:
+      rev: 'stable/kilo'
+      git_mirror: https://github.com/stackforge/nova-docker.git
+      dest: /opt/stack/novadocker
+  source:
+    rev: 'stable/kilo'
+    python_dependencies:
+      - { name: mysql-python }
+      - { name: python-memcached }
+      - { name: requests, version: 2.7.0 }
+      - { name: kombu>=3.0.7 }
+      - { name: amqp>=1.4.0 }
+    system_dependencies:
+      - libjs-jquery-tablesorter
+      - libmysqlclient-dev
+      - python-libvirt
+  alternatives:
+    - nova-all
+    - nova-api
+    - nova-api-ec2
+    - nova-api-metadata
+    - nova-api-os-compute
+    - nova-cells
+    - nova-cert
+    - nova-compute
+    - nova-conductor
+    - nova-console
+    - nova-consoleauth
+    - nova-dhcpbridge
+    - nova-idmapshift
+    - nova-manage
+    - nova-network
+    - nova-novncproxy
+    - nova-objectstore
+    - nova-rootwrap
+    - nova-scheduler
+    - nova-serialproxy
+    - nova-spicehtml5proxy
+    - nova-xvpvncproxy
+  logs:
+    - paths:
+        - /var/log/nova/nova-api.log
+      fields:
+        type: openstack
+        tags: nova,nova-api
+    - paths:
+        - /var/log/nova/nova-cert.log
+      fields:
+        type: openstack
+        tags: nova,nova-cert
+    - paths:
+        - /var/log/nova/nova-compute.log
+      fields:
+        type: openstack
+        tags: nova,nova-compute
+    - paths:
+        - /var/log/nova/nova-conductor.log
+      fields:
+        type: openstack
+        tags: nova,nova-conductor
+    - paths:
+        - /var/log/nova/nova-consoleauth.log
+      fields:
+        type: openstack
+        tags: nova,nova-consoleauth
+    - paths:
+        - /var/log/nova/nova-manage.log
+      fields:
+        type: openstack
+        tags: nova,nova-manage
+    - paths:
+        - /var/log/nova/nova-novncproxy.log
+      fields:
+        type: openstack
+        tags: nova,novnc
+    - paths:
+        - /var/log/nova/nova-scheduler.log
+      fields:
+        type: openstack
+        tags: nova,nova-scheduler
+  logging:
+    debug: False
+    verbose: True
+  cafile: "{{ ssl.cafile|default('/etc/ssl/certs/ca-certificates.crt') }}"

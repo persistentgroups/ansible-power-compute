@@ -1,0 +1,29 @@
+---
+common:
+  ntpd:
+    servers: []
+  serial_console:
+    enabled: True
+    name: ttyS0
+  ssh_private_keys: []
+  ssh:
+    allow_from:
+      - 0.0.0.0/0
+      - ::/0
+    disable_root: False
+    disable_dns: True
+  pip_version: 7.1.2
+  setuptools_version: system
+  system_tools:
+    mcelog: True
+  packages_to_remove:
+    - language-selector-common
+  logs:
+    - paths:
+        - /var/log/audit/audit.log
+      fields:
+      type: syslog
+      tags: audit,common
+openstack:
+  pypi_mirror: https://pypi.python.org/simple/
+  controller_ips: []
