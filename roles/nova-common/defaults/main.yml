@@ -13,6 +13,7 @@ nova:
   ram_allocation_ratio: 1.0
   libvirt_cpu_model: null
   libvirt_type: kvm
+  backend_ceph: False
   enable_ssh: False
   novnc_method: git
   novnc_repo: https://github.com/kanaka/noVNC.git

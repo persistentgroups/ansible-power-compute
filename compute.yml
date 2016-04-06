@@ -28,6 +28,18 @@
       tags: ['openstack', 'nova', 'data']
   environment: "{{ env_vars|default({}) }}"
 
+
+- name: ceph compute
+  hosts: compute
+  any_errors_fatal: true
+  gather_facts: true
+  roles:
+    - role: ceph-compute
+      tags: ['ceph', 'ceph-compute']
+      when: ceph.enabled|bool
+  environment: "{{ env_vars|default({}) }}"
+
+
 - name: neutron core data plane
   gather_facts: true
   hosts: compute
