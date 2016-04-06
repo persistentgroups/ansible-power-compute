@@ -6,10 +6,10 @@ fqdn: controller
 # Currently supports only source
 openstack_install_method: source
 
-floating_ip: 169.45.172.97
-undercloud_floating_ip: 10.154.54.7
+floating_ip: 10.154.54.7 # Controller_IP
+undercloud_floating_ip: 10.154.54.7 # Controller_IP
 undercloud_cidr:
-  - 10.233.53.0/24   #10.154.54.0/27
+  - 10.233.53.0/24
 primary_interface: 'ansible_eth0'
 force_sync: true
 primary_ip: "{{ hostvars[inventory_hostname][primary_interface]['ipv4']['address'] }}"
@@ -34,7 +34,7 @@ ironic:
 openstack:
  pypi_mirror: https://pypi.python.org/simple/ 
  controller_ips:
-   - 169.45.172.97
+   - 169.45.172.97 # Controller_IP
 
 endpoints:
   auth_uri: https://{{ fqdn }}:5000/v2.0
@@ -74,6 +74,7 @@ cinder:
 
 neutron:
   plugin: ml2
+  mech_driver: ovs
   tenant_network_type: vxlan
   tunnel_types:
     - vxlan
@@ -89,7 +90,7 @@ neutron:
     cidr: 10.233.53.0/24  #169.254.192.0/18
     password: password
     interval: 2
-  bridge_mappings: physnet:eth0
+  bridge_mappings: '' # Should be empty for OVS
   network_vlan_ranges: physnet:925:925
   networks:
     - name: internal

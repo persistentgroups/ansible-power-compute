@@ -18,6 +18,12 @@
 
 - include: dnsmasq.yml
 
+- name: ensure ovs br-ex bridge present
+  ovs_bridge: name=br-ex state=present
+  when: neutron.mech_driver == 'ovs'
+  notify:
+    - ifup br-ex
+
 - include: igmp-router.yml
   when: neutron.plugin == 'ml2' and 'vxlan' in neutron.tunnel_types and not neutron.l2_population
 

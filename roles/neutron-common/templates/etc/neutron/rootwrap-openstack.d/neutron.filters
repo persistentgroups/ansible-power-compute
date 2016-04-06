@@ -3,4 +3,4 @@ openstack_install_method == 'source' else
 lookup('items', 'openstack_package.virtualenv_base') %}
 
 [Filters]
-kill_ursulapaths: KillFilter, root, {{ basepath }}/neutron/bin/python, -9
+kill_paths: KillFilter, root, {{ basepath }}/neutron/bin/python, -9

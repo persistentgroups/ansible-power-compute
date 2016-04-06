@@ -5,16 +5,6 @@
     - vlan
     - bridge-utils
 
-- name: unload openvswitch if present
-  modprobe: name=openvswitch state=absent
-
-- name: blacklist openvswitch
-  template: dest=/etc/modprobe.d/blacklist-openvswitch.conf
-            src=etc/modprobe.d/blacklist-openvswitch.conf
-            mode=0644
-            owner=root
-            group=root
-
 - name: configure VXLAN to use IANA assigned port 4789
   copy: content="options vxlan udp_port=4789"
         dest=/etc/modprobe.d/vxlan-port.conf owner=root group=root mode=0644
@@ -106,6 +96,18 @@
   template: src=etc/neutron/plugins/ml2/ml2_plugin.ini
             dest=/etc/neutron/plugins/ml2/ml2_plugin.ini
             mode=0644
+  notify:
+    - restart neutron services
+
+- name: ovs plugin dir
+  file: dest=/etc/neutron/plugins/openvswitch state=directory
+  when: neutron.plugin == 'ml2' and neutron.mech_driver == 'ovs'
+
+- name: ovs config
+  template: src=etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini
+            dest=/etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini
+            mode=0644
+  when: neutron.plugin == 'ml2' and neutron.mech_driver == 'ovs'
   notify:
     - restart neutron services
 

@@ -8,6 +8,12 @@
       tags: ['common']
   environment: "{{ env_vars|default({}) }}"
 
+- name: openvswitch
+  hosts: compute
+  roles:
+    - role: openvswitch
+      when: neutron.mech_driver == 'ovs'
+      tags: ['infra', 'data', 'openvswitch']
 
 - name: openstack client tools
   hosts: compute
