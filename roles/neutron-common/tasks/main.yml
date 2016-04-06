@@ -71,7 +71,7 @@
       permission: r
 
 # Neutron needs the service tenant id. This goes away after juno
- when neutron can use tenant_name.
+# when neutron can use tenant_name.
 - name: Fetch service tenant info from keystone
   keystone_user: tenant=service
                  endpoint="{{ endpoints.keystone.url.admin }}/{{ endpoints.keystone.version }}/"
