@@ -82,17 +82,12 @@ neutron:
   tunnel_types:
     - vxlan
   lbaas:
-    enable: True
-  l2_population: True
+    enable: False
+  l2_population: False
   allow_overlapping_ips: True
   enable_external_interface: False
   l3ha:
-    enabled: True
-    max_agents: 2
-    min_agents: 2
-    cidr: 10.233.53.0/24  #169.254.192.0/18
-    password: password
-    interval: 2
+    enabled: False
   bridge_mappings: '' # Should be empty for OVS
   network_vlan_ranges: physnet:925:925
   networks:
@@ -132,10 +127,12 @@ neutron:
     - router_name: default
       subnet_name: internal
       tenant_name: admin
-
+ceph:
+  enabled: False
+  
 nova:
   libvirt_type: kvm
-  
+  backend_ceph: False
 ssl:
   crt: |
 
