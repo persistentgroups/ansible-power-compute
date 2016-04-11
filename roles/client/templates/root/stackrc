@@ -10,3 +10,4 @@ export OS_CACERT=/etc/ssl/certs/ca-certificates.crt
 export OS_NO_CACHE=True
 export OS_VOLUME_API_VERSION=2
 export OS_COMPUTE_API_VERSION=2
+export OS_IDENTITY_API_VERSION={{ identity_version }}
