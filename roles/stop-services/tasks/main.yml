@@ -1,4 +1,0 @@
----
-- name: stop services
-  service: name={{ item }} state=stopped
-  with_items: services

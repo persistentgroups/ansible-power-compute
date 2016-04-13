@@ -1,3 +1,0 @@
----
-- name: reload iptables
-  shell: iptables-restore --noflush < /etc/network/iptables-firewall

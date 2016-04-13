@@ -1,22 +1,5 @@
 [controller]
 controller1
-controller2
-
-[network]
-controller1
-#controller2
-
-[db]
-controller1
-controller2
-
-[mongo_db]
-controller1
-controller2
-
-[cinder_volume]
-controller1
-controller2
 
 [db_arbiter]
 compute1
@@ -26,16 +9,3 @@ compute1
 
 [compute]
 compute1
-
-[ceph_monitors]
-# when expanding cluster, place new hosts BELOW existing hosts
-
-[ceph_osds:children]
-ceph_osds_ssd
-ceph_osds_hybrid
-
-[ceph_osds_ssd]
-# when expanding cluster, place new hosts BELOW existing hosts
-
-[ceph_osds_hybrid]
-# when expanding cluster, place new hosts BELOW existing hosts

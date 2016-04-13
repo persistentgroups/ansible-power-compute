@@ -3,77 +3,13 @@ stack_env: compute
 
 fqdn: controller
 
-# Currently supports only source
-openstack_install_method: source
-
-floating_ip: 10.154.54.7 # Controller_IP
 undercloud_floating_ip: 10.154.54.7 # Controller_IP
 undercloud_cidr:
   - 10.233.53.0/24
 primary_interface: 'ansible_eth0'
-force_sync: true
-primary_ip: "{{ hostvars[inventory_hostname][primary_interface]['ipv4']['address'] }}"
-
-etc_hosts:
-  - name: "{{ fqdn }}"
-    ip: "{{ undercloud_floating_ip }}"
-
-openstack_package_path: /opt/openstack/current
 
 # Keystone version
 identity_version: 2
-
-rabbitmq:
-  port: 5672
-  user: openstack
-  cluster: false
-
-ironic:
-  enabled: False
-  logging:
-    debug: True
-    verbose: True
-
-openstack:
- pypi_mirror: https://pypi.python.org/simple/ 
- controller_ips:
-   - 169.45.172.97 # Controller_IP
-
-endpoints:
-  auth_uri: https://{{ fqdn }}:5000/v2.0
-
-secrets:
-  db_password:        NOVA_DBPASS
-  service_password:   admin
-  rabbit_password:    RABBIT_PASS
-  admin_password:     admin
-  metadata_proxy_shared_secret: METADATA_SECRET
-  project_admin_password: default
-  stack_domain_admin_password: default
-state_path_base: /opt/stack/data
-
-cinder:
-  enabled: True
-  enabled_backends: [] # rbd_volumes for Ceph
-  backends: []
-    # Ceph
-    #- name: rbd_volumes
-    #  volume_driver: cinder.volume.drivers.rbd.RBDDriver
-  volume_type: file
-  volume_file: /opt/stack/cinder-volumes
-  volume_file_size: 5G
-  create_vg: True
-  fixed_key: 6a5c55db5e250f234b6af7807dafda77433dddcf372b6d04801a45f578a35aa7
-  logging:
-    debug: True
-    verbose: True
-  volume_types: []
-  encrypted_volume_types:
-    - volume_type: encrypted-aes-512
-      cipher: aes-xts-plain64
-      key_size: 512
-      provider: nova.volume.encryptors.luks.LuksEncryptor
-      control_location: front-end
 
 neutron:
   plugin: ml2
@@ -85,57 +21,24 @@ neutron:
     enable: False
   l2_population: False
   allow_overlapping_ips: True
-  enable_external_interface: False
   l3ha:
     enabled: False
   bridge_mappings: '' # Should be empty for OVS
   network_vlan_ranges: physnet:925:925
-  networks:
-    - name: internal
-      shared: true
-      external: false
-      network_type: gre
-      provider_physical_network: ~
-      segmentation_id: 1
-    - name: external
-      shared: false
-      external: true
-      network_type: gre
-      segmentation_id: 925
-      provider_physical_network: physnet
-  subnets:
-    - name: internal
-      network_name: internal
-      cidr: 10.0.0.0/24   #192.168.100.0/24
-      enable_dhcp: "true"
-      gateway_ip: 10.0.0.1  #192.168.100.1
-      dns_nameservers: '8.8.8.8,8.8.4.4'
-      ip_version: 4
-    - name: public
-      network_name: external
-      cidr: 10.233.53.0/24  #169.45.172.96/27
-      enable_dhcp: "false"
-      gateway_ip: 10.233.53.253  #169.45.172.97
-      dns_nameservers: '8.8.8.8,8.8.4.4'
-      ip_version: 4
 
   routers:
     - name: default
       tenant_name: admin
       enable_snat: true
-  router_interfaces:
-    - router_name: default
-      subnet_name: internal
-      tenant_name: admin
+
 ceph:
   enabled: False
   
 nova:
-  libvirt_type: kvm
   backend_ceph: False
+
 ssl:
   crt: |
-
     -----BEGIN CERTIFICATE-----
     MIIDjjCCAnagAwIBAgIJAMBHWvgb1w1YMA0GCSqGSIb3DQEBCwUAMGcxCzAJBgNV
     BAYTAklOMQwwCgYDVQQIDANHT0ExDjAMBgNVBAcMBVZFUk5BMQwwCgYDVQQKDANQ
@@ -158,32 +61,3 @@ ssl:
     HyJVLwdnGgIWgltih7cM4f+oR//4WtkPRGoriy3oPPcBefVXBwmUEooedGxJ/zGw
     HQM=
     -----END CERTIFICATE-----
-
-  key: |
-    -----BEGIN RSA PRIVATE KEY-----
-    MIIEpAIBAAKCAQEAxoIBncwV5A2CQhm83dQcDxyVrhhu91qJSmAgqrEl+r5ToS0a
-    pCeD75Y9BI46JYMHk9KUWD6Es/6feUTvCh8IqjHs4bUMsx59HYWZRdLylX0GVjQD
-    t+8RIX9bBhdvB2ED+F2iJd3xBMjsBX5d9hvsiTV4zSfdDWchdsmOFKO6oWBVEPGT
-    oIcYuj5LOjVpG8cjzIquBidQdxg56ckXDtxIz5ZJt/3UU/5YMbZFaTt6kBr6fWq2
-    j/XUXuqOCJebPK1bRmU/U/gfQ7RW+bNGBt5UC2N1Wvws99nL4R4VMPSfmUwfV+rn
-    Lt5v2vv+d2sb17g/J1PuFpYoG2pub/wLSUPcjwIDAQABAoIBAEFz0maeSUWFssJq
-    zBx0eL/+09ewlL4YaxZL9dlySayQnvCQ96zSnq0b44iiAMgnmRMDpwglrQnQVfLd
-    aNf0fZ3okkulr8dLsUNPrscYFAZ4T+OSiPtX51UdMf0jMufC9FUrQnCr6nGCclgp
-    X3/rmyVurSMwFrH5pE4PjTp+9eWJUgm6PXrDPuQ0N8SwhxaX+Gw6fb4yGQHNCdLx
-    17uh9QFwJMwI7Pg1Po6/hyQKpuILxQeawxwfOFvLZTkMTOX1pWtu74JDXxJaxzH9
-    aaX9g2JqtE56MEMQ6eJnkJldVtVxWS4lFlOkoTlbVfyVOozKvtESP1af6pZxqKKg
-    KPK3PEkCgYEA7Rl4pq40VV9sm5Q6HwyEKtG/M1QpBO4eFRGHxV5dpetJ4jXC/EXX
-    uslgsLAmyKnTX+kMBdcMJ/jEQpIbM2XOaQmsZgpSwZ5Jmc0BsOsYO/p+MD/wrROP
-    p5eQEKKB067YCu/DGe5L5IxfwYXEm13fZX9IwJ1RcBn7rYndc0vkbQMCgYEA1lT9
-    Fln8sADgQhbU8YazltNbg7DYmIR8kjElgaDWM32VfDQCCbdJZnMmRww/pxlF349K
-    PvUvnKeABeqLQyV3/fb2lXAjVIDrGwpap3FXl+gqMtXmhD+Xep+2SRFnq4FYbvh+
-    wKZ66UDWagjF5QU/CNVAMA7PHKcY069LXkXlvoUCgYEAlktKHqZYyDFIAErymNHv
-    SdFRWTElG1nxubs2DFdoF4/RctJPemiveljCsN3Ih/SW57org9wweXoItoY1Ndx3
-    /j9CiCBNGyzCTPsV8lbkMsjzipRNdPjsW/kIOnM4xr2Td0NKsjpK42JUJLEt0qqr
-    vIP10xsmD2B5GCVHOhnGf48CgYEAo0jMJyMXJt8D+lV6lSaR2u3aYlFwMYF9hcJ7
-    WG43wbKDF8RnaQ+Bk9NV7fqe46aVXOPFJIGWbDoPhnJQ9i6tY4WqBd8Qi2hLtKYG
-    ulnW6Zutyly66TWpKXpTXQcte7Nms+QMbKhoKxuCPfXBDeEZTJlp9TLTBnkmqN57
-    BK8rgCECgYAxMobCWQh7bRt/jPAXNs8ishIqgqTlbNmQj9jWSo77YT8oVgFQcspo
-    aQX7LndgWachpT0Fblg+1otjAmtDV3ifMAZxXWILhzmeAuYaGkYs4QBIeuOyqrrm
-    H24sEMlJfOtygBKdcYxsZ5UQTdP+WI/78oNEWllheEVrHaP97lklPQ==
-    -----END RSA PRIVATE KEY-----
