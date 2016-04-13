@@ -78,9 +78,9 @@ cinder:
 neutron:
   plugin: ml2
   mech_driver: ovs
-  tenant_network_type: vxlan
+  tenant_network_type: gre
   tunnel_types:
-    - vxlan
+    - gre
   lbaas:
     enable: False
   l2_population: False
@@ -94,13 +94,13 @@ neutron:
     - name: internal
       shared: true
       external: false
-      network_type: vxlan
+      network_type: gre
       provider_physical_network: ~
       segmentation_id: 1
     - name: external
       shared: false
       external: true
-      network_type: vlan
+      network_type: gre
       segmentation_id: 925
       provider_physical_network: physnet
   subnets:
