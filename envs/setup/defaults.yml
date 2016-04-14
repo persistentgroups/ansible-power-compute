@@ -9,8 +9,10 @@ openstack_install_method: source
 undercloud_floating_ip: 10.154.54.7 # Controller_IP
 undercloud_cidr:
   - 10.233.53.0/24
-primary_interface: 'ansible_eth0'
-primary_ip: "{{ hostvars[inventory_hostname][primary_interface]['ipv4']['address'] }}"
+
+primary_interface_controller: 'ansible_eth0'
+primary_interface_compute: 'ansible_eth1'
+primary_ip: "{{ hostvars[inventory_hostname][primary_interface_compute]['ipv4']['address'] }}"
 
 etc_hosts:
   - name: "{{ fqdn }}"

@@ -20,8 +20,8 @@
     - mtr
     - netcat
     - pv
-    - ruby1.9.1
-    - ruby1.9.1-dev
+    - ruby
+    - ruby-dev
     - smem
     - socat
     - tree
@@ -43,7 +43,6 @@
 - name: load vlan module
   lineinfile: dest=/etc/modules
               line="8021q"
-  when: ansible_distribution_version == "14.04"
 
 - name: install mcelog package
   apt: pkg=mcelog

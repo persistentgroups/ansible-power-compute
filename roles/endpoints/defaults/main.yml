@@ -5,7 +5,7 @@ endpoints:
   rabbit: "{{ undercloud_floating_ip }}"
   memcache: "{{ undercloud_floating_ip }}:11211"
   identity_uri: https://{{ fqdn }}:35357
-  auth_uri: https://{{ fqdn }}:5000/v2.0
+  auth_uri: https://{{ fqdn }}:5000
   nova:
     name: nova
     type: compute
@@ -78,13 +78,14 @@ endpoints:
       admin: https://{{ fqdn }}:35357
     port:
       backend_api: 5000
-  novnc:
+ novnc:
     url:
       admin: https://{{ fqdn }}:6080
       internal: https://{{ fqdn }}:6080
       public: https://{{ fqdn }}:6080
     port:
-      backend_api: 6080
+      backend_api: 6081
+      haproxy_api: 6080
   neutron:
     name: neutron
     type: network

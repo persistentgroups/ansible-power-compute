@@ -54,6 +54,14 @@
   upstart_service: name=nova-compute user=nova cmd=/usr/local/bin/nova-compute
                    config_dirs=/etc/nova
 
+- name: install nova-compute service for ubuntu 15.04 and 15.10, Copy nova-compute.service
+  copy: src=lib/systemd/system/nova-compute.service dest=/lib/systemd/system/nova-compute.service mode=0644
+  when: ansible_distribution_version == "15.04" or ansible_distribution_version == "15.10"
+
+- name: install nova-compute service for ubuntu 15.04 and 15.10, Reload systemctl
+  command: systemctl daemon-reload
+  when: ansible_distribution_version == "15.04" or ansible_distribution_version == "15.10"
+
 - name: trigger restart on upgrades
   debug:
     msg: "Triggering service restart for upgrade"

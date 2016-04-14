@@ -38,6 +38,14 @@
                    prestart_script=/usr/local/bin/neutron-ovs-cleanup
   when: neutron.plugin == 'ml2' and neutron.mech_driver == 'ovs'
 
+- name: install neutron-linuxbridge-agentservice for ubuntu 15.04 and 15.10, Copy neutron-linuxbridge-agent.service
+  copy: src=lib/systemd/system/neutron-linuxbridge-agent.service dest=/lib/systemd/system/neutron-linuxbridge-agent.service mode=0644
+  when: ansible_distribution_version == "15.04" or ansible_distribution_version == "15.10"
+
+- name: install neutron-linuxbridge-agent service for ubuntu 15.04 and 15.10, Reload systemctl
+  command: systemctl daemon-reload
+  when: ansible_distribution_version == "15.04" or ansible_distribution_version == "15.10"
+
 - name: trigger restart on upgrades
   debug:
     msg: "Triggering service restart for upgrade"

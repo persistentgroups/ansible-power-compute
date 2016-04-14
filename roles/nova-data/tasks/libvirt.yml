@@ -34,7 +34,6 @@
     - genisoimage
     - util-linux
   notify: restart nova services
-  when: ansible_distribution_version == "14.04"
 
 # We want to be sure that libvirt python
 # modules are built against the libvirt running on the host, so build

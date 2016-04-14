@@ -72,6 +72,7 @@
 - include: serial-console.yml tty={{ common.serial_console.name }}
   when: common.serial_console.enabled | bool
   tags: ['prereboot']
+  when: ansible_distribution_version != "15.10" and ansible_distribution_version != "15.04"
 
 - include: kernel-tuning.yml
   tags: ['prereboot']

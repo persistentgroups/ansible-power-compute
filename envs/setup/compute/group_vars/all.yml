@@ -6,10 +6,15 @@ fqdn: controller
 undercloud_floating_ip: 10.154.54.7 # Controller_IP
 undercloud_cidr:
   - 10.233.53.0/24
-primary_interface: 'ansible_eth0'
 
-# Keystone version
-identity_version: 2
+primary_interface_controller: 'ansible_eth0'
+primary_interface_compute: 'ansible_eth1'
+
+identity_api_version: 2
+
+endpoints:
+  keystone:
+    version: v2.0
 
 neutron:
   plugin: ml2

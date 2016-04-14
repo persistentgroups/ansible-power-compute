@@ -51,7 +51,6 @@
   with_items:
     - python-httplib2
     - python-requests
-  when: ansible_distribution_version == "14.04"
 
 - meta: flush_handlers
 

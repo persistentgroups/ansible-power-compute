@@ -27,8 +27,6 @@
   gather_facts: true
   hosts: compute
   any_errors_fatal: true
-  vars:
-    primary_interface: 'ansible_eth0'
   roles:
     - role: nova-data
       tags: ['openstack', 'nova', 'data']

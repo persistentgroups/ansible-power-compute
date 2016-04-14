@@ -1,5 +1,5 @@
 export OS_PASSWORD={{ secrets.admin_password }}
-export OS_AUTH_URL={{ endpoints.auth_uri }}
+export OS_AUTH_URL={{ endpoints.auth_uri }}/{{ endpoints.keystone.version }}
 export OS_USERNAME=admin
 export OS_TENANT_NAME=admin
 {% if client.self_signed_cert -%}
@@ -10,4 +10,4 @@ export OS_CACERT=/etc/ssl/certs/ca-certificates.crt
 export OS_NO_CACHE=True
 export OS_VOLUME_API_VERSION=2
 export OS_COMPUTE_API_VERSION=2
-export OS_IDENTITY_API_VERSION={{ identity_version }}
+export OS_IDENTITY_API_VERSION={{ identity_api_version }}
