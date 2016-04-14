@@ -2,11 +2,6 @@
 ceph:
 
   enabled: false
-  #disks:
-  #  - sdb
-  #  - sdc
-  #  - sdd
-
   stable_release: hammer
 
   openstack_keys:
@@ -22,8 +17,6 @@ ceph:
   ceph_pkgs:
     - ceph
     - ceph-common
-  osd_pkgs:
-    - parted
 
   # Ceph options
   cephx: true

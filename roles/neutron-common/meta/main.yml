@@ -12,8 +12,3 @@ dependencies:
     system_dependencies: "{{ neutron.source.system_dependencies }}"
     python_dependencies: "{{ neutron.source.python_dependencies }}"
     when: openstack_install_method == 'source'
-  - role: openstack-package
-    project_name: neutron
-    rootwrap: True
-    alternatives: "{{ neutron.alternatives }}"
-    when: openstack_install_method == 'package'

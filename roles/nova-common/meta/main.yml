@@ -14,10 +14,5 @@ dependencies:
     system_dependencies: "{{ nova.source.system_dependencies }}"
     python_dependencies: "{{ nova.source.python_dependencies }}"
     when: openstack_install_method == 'source'
-  - role: openstack-package
-    project_name: nova
-    rootwrap: True
-    alternatives: "{{ nova.alternatives }}"
-    when: openstack_install_method == 'package'
   - role: ceph-common
     when: ceph.enabled|bool and nova.backend_ceph|bool
