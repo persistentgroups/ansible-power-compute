@@ -8,13 +8,6 @@
       tags: ['common']
   environment: "{{ env_vars|default({}) }}"
 
-- name: openvswitch
-  hosts: compute
-  roles:
-    - role: openvswitch
-      when: neutron.mech_driver == 'ovs'
-      tags: ['infra', 'data', 'openvswitch']
-
 - name: openstack client tools
   hosts: compute
   any_errors_fatal: true
@@ -43,6 +36,12 @@
       when: ceph.enabled|bool
   environment: "{{ env_vars|default({}) }}"
 
+- name: openvswitch
+  hosts: compute
+  roles:
+    - role: openvswitch
+      when: neutron.mech_driver == 'ovs'
+      tags: ['infra', 'data', 'openvswitch']
 
 - name: neutron core data plane
   gather_facts: true

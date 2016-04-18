@@ -28,16 +28,11 @@ rabbitmq:
   user: openstack
   cluster: false
 
-ironic:
-  enabled: False
 
 openstack:
  pypi_mirror: https://pypi.python.org/simple/ 
  controller_ips:
    - 169.45.172.97 # Controller_IP
-
-endpoints:
-  auth_uri: https://{{ fqdn }}:5000/v2.0
 
 secrets:
   db_password:        NOVA_DBPASS
