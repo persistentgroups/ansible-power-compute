@@ -3,39 +3,35 @@ stack_env: compute
 
 fqdn: controller
 
-undercloud_floating_ip: 10.51.234.43 # Controller_IP
+undercloud_floating_ip: 10.233.53.111 # Controller_IP
 undercloud_cidr:
-  - 10.51.224.0/20
+  - 10.233.53.0/20
 
 primary_interface_controller: 'ansible_eth0'
 primary_interface_compute: 'ansible_eth0'
 
 openstack:
  controller_ips:
-   - 10.51.234.43 # Controller_IP
+   - 10.233.53.111 # Controller_IP
 
-identity_api_version: 2.0
+identity_api_version: 3
 
 endpoints:
-  auth_uri: https://{{ fqdn }}:5000 
+  auth_uri: http://{{ fqdn }}:35357
 
 secrets:
-  db_password:      asdf
-  mongodb_password: asdf
-  service_password: asdf
-  rabbit_password:  asdf
-  admin_password:   asdf
-  stack_domain_admin_password: ydgurtH5erghithge57
-  metadata_proxy_shared_secret: asdf
-  horizon_secret_key:           asdf
-  glance_sync:      ADQ64XUQLUWH75M634RVBLP55RKPGGOWG
-  monitor_password: asdf
-  telemetry_secret: asdf
-  cloud_admin_password: asdf
-
+  nova_db_password:      NOVA_DBPASS
+  nova_service_password: nova_pass
+  rabbit_password:  RABBIT_PASS
+  admin_password:   admin
+  metadata_proxy_shared_secret: metadata_pass
+  neutron_db_password: NEUTRON_DBPASS
+  neutron_service_password: neutron_pass
 neutron:
+  source:
+    rev: 'stable/kilo'
   plugin: ml2
-  mech_driver: linuxbridge
+  mech_driver: ovs
   tenant_network_type: vxlan
   tunnel_types:
     - vxlan
@@ -46,16 +42,18 @@ neutron:
   enable_external_interface: False
   l3ha:
     enabled: False
-  bridge_mappings: physnet:eth0
+ # bridge_mappings: physnet:eth0
   network_vlan_ranges: physnet:925:925
 
 ceph:
   enabled: False
 
 nova:
+  source:
+    rev: 'stable/kilo'
   backend_ceph: False
   libvirt_type: kvm
-
+  
 ssl:
   crt: |
     -----BEGIN CERTIFICATE-----
