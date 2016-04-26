@@ -1,0 +1,10 @@
+---
+nova:
+  install_packages:
+    - numpy
+  source:
+    system_dependencies:
+        - python-XStatic-JQuery-TableSorter
+        - mariadb-devel 
+        - libvirt-python
+

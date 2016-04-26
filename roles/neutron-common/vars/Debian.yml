@@ -1,0 +1,4 @@
+---
+neutron_packages:
+  - vlan
+  - bridge-utils

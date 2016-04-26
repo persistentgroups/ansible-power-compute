@@ -7,6 +7,7 @@ User=nova
 Group=nova
 WorkingDirectory=/var/lib/nova
 PermissionsStartOnly=true
+ExecStartPre=/bin/mkdir -p /var/lock/nova /var/log/nova /var/lib/nova
 ExecStartPre=/bin/chown nova:nova /var/lock/nova /var/log/nova /var/lib/nova
 ExecStart=/usr/local/bin/nova-compute --config-dir /etc/nova  --config-file /etc/nova/nova.conf --log-file /var/log/nova/nova-compute.log
 Restart=on-failure

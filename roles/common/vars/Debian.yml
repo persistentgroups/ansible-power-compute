@@ -1,0 +1,57 @@
+---
+python_dependencies_list:
+    - python-pip
+    - python-libxml2
+    - python-lxml
+    - python-greenlet
+    - python-openssl
+    - python2.7-dev
+    - python-httplib2
+    - python-software-properties
+    - python-virtualenv
+    - python-mysqldb
+    - python-jinja2
+    - cryptsetup
+    - libffi-dev
+    - libssl-dev
+    - libxml2-dev
+    - libxslt1-dev
+
+system_tools_list:
+    - acl
+    - auditd
+    - build-essential
+    - curl
+    - dstat
+    - ethtool
+    - git
+    - htop
+    - iftop
+    - iotop
+    - iperf
+    - ltrace
+    - mtr
+    - netcat
+    - pv
+    - ruby
+    - ruby-dev
+    - smem
+    - socat
+    - tree
+    - vim
+    - cdpr
+    - sysstat
+    - logrotate
+    - ntp
+    - vlan
+    - lvm2
+    - libpam-cracklib
+
+ack_tool: ack-grep
+lm_sensors_pkg: lm-sensors
+update_ca_certs: update-ca-certificates
+password_policy_dest: /etc/pam.d/common-password
+load_vlan_module_dest:  /etc/modules
+update_grub: /usr/sbin/update-grub
+timezone_update: "dpkg-reconfigure --frontend noninteractive tzdata"
+ntp_service: ntp

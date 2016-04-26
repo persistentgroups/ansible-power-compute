@@ -1,0 +1,6 @@
+---
+diagnostic_tools:
+  - bwm-ng
+  - ipset
+
+iproute_pkg: iproute2

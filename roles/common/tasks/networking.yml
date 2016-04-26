@@ -67,7 +67,7 @@
     - apply-sysctl
 
 - name: ipv6 privacy
-  lineinfile: dest=/etc/sysctl.d/10-ipv6-privacy.conf
+  lineinfile: dest=/etc/sysctl.d/10-ipv6-privacy.conf create=yes
               regexp="{{ item.value.regex }}"
               line="{{ item.value.line }}"
   notify:

@@ -21,4 +21,4 @@
     - restart-ntp
 
 - name: ntp service enabled
-  service: name=ntp state=started enabled=true
+  service: name={{ ntp_service }} state=started enabled=true

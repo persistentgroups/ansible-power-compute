@@ -21,18 +21,10 @@
   notify: restart nova services
   when: ansible_distribution_version == "12.04"
 
-- name: install nova-compute packages (trusty)
-  apt: pkg={{ item }}
+- name: install nova-compute packages (trusty and powerkvm)
+  action: "{{ ansible_pkg_mgr }} name={{ item }}"
   with_items:
-    - cpu-checker
-    - libvirt-bin
-    - python-libvirt
-    - qemu-kvm
-    - open-iscsi
-    - libvirt-dev
-    - pkg-config
-    - genisoimage
-    - util-linux
+    - "{{ nova_compute_packages }}"
   notify: restart nova services
 
 # We want to be sure that libvirt python
@@ -98,7 +90,7 @@
 
 - name: ensure kvm is supported by cpu and enabled in bios
   command: kvm-ok
-  when: "'{{ nova.libvirt_type }}' == 'kvm'"
+  when: "'{{ nova.libvirt_type }}' == 'kvm' and ansible_os_family != 'Ibm_powerkvm'"
   changed_when: False
 
 - name: shutdown default libvirt network if started
@@ -110,3 +102,20 @@
 
 - name: add nova to the libvirtd group
   user: name=nova groups=libvirtd append=true system=yes createhome=no
+  when: ansible_os_family == "Debian"
+
+- name: add group libvirtd
+  group: name=libvirtd state=present
+  when: ansible_os_family == "Ibm_powerkvm"
+
+- name: add user to group libvirtd
+  user: name=nova groups=libvirtd append=true system=yes createhome=no
+  when: ansible_os_family == "Ibm_powerkvm"
+  
+- name: update libvirtd conf to use libvirtd group
+  lineinfile:
+    dest: /etc/libvirt/libvirtd.conf
+    regexp: '^unix_sock_group'
+    line: 'unix_sock_group = "libvirtd"'
+  notify: restart libvirt-bin
+  when: ansible_os_family == "Ibm_powerkvm"

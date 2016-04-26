@@ -47,7 +47,7 @@
   when: ansible_distribution_version == "12.04"
 
 - name: httplib2 and request Python modules that already use system CA certs
-  apt: pkg={{ item }}
+  action: "{{ ansible_pkg_mgr }} name={{ item }}"
   with_items:
     - python-httplib2
     - python-requests
@@ -55,4 +55,4 @@
 - meta: flush_handlers
 
 - name: update ca certificates
-  command: update-ca-certificates
+  command: "{{ update_ca_certs }}"

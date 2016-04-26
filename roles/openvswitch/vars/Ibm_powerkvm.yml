@@ -1,0 +1,5 @@
+---
+ovs_packages:
+  - openvswitch
+  - vconfig
+  - bridge-utils

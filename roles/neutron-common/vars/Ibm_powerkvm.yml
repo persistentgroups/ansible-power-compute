@@ -1,0 +1,4 @@
+---
+neutron_packages:
+  - vconfig
+  - bridge-utils

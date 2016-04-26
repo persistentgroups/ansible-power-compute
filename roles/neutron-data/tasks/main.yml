@@ -1,15 +1,19 @@
 ---
-- name: install required packages and diagnostic tools
-  apt: name={{ item }}
-  with_items:
-  - bwm-ng
-  - ipset
+- include_vars: "{{ ansible_os_family }}.yml"
 
-- name: update iproute2 to latest ppa
-  apt: name=iproute2 state=latest
+- name: install required packages and diagnostic tools
+  action: "{{ ansible_pkg_mgr }} name={{ item }}"
+  with_items:
+    - "{{ diagnostic_tools }}"
+
+- name: update iproute to latest ppa
+  action: "{{ ansible_pkg_mgr }} name={{ item }} state=latest"
+  with_items:
+    - "{{ iproute_pkg }}"
 
 - name: permit VXLAN traffic
-  ufw: rule=allow to_port=4789 proto=udp
+#  ufw: rule=allow to_port=4789 proto=udp
+  firewalld: port=4789/udp permanent=true state=enabled
   tags: ufw
   when: neutron.plugin == 'ml2' and 'vxlan' in neutron.tunnel_types
 
@@ -27,7 +31,7 @@
                    cmd=/usr/local/bin/neutron-linuxbridge-agent
                    config_dirs=/etc/neutron
                    config_files=/etc/neutron/neutron.conf,/etc/neutron/plugins/ml2/ml2_plugin.ini,/etc/neutron/plugins/ml2/ml2_plugin_dataplane.ini
-  when: neutron.plugin == 'ml2' and neutron.mech_driver == 'linuxbridge'
+  when: neutron.plugin == 'ml2' and neutron.mech_driver == 'linuxbridge' and ansible_os_family == "Debian"
 
 - name: install neutron-openvswitch-agent service
   upstart_service: name=neutron-openvswitch-agent
@@ -36,15 +40,19 @@
                    config_dirs=/etc/neutron
                    config_files=/etc/neutron/neutron.conf,/etc/neutron/plugins/ml2/ml2_plugin.ini,/etc/neutron/plugins/ml2/ml2_plugin_dataplane.ini,/etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini
                    prestart_script=/usr/local/bin/neutron-ovs-cleanup
-  when: neutron.plugin == 'ml2' and neutron.mech_driver == 'ovs'
+  when: neutron.plugin == 'ml2' and neutron.mech_driver == 'ovs' and ansible_os_family == "Debian"
 
-- name: install neutron-linuxbridge-agentservice for ubuntu 15.04 and 15.10, Copy neutron-linuxbridge-agent.service
+- name: install neutron-linuxbridge-agent service, Copy neutron-linuxbridge-agent.service
   copy: src=lib/systemd/system/neutron-linuxbridge-agent.service dest=/lib/systemd/system/neutron-linuxbridge-agent.service mode=0644
-  when: ansible_distribution_version == "15.04" or ansible_distribution_version == "15.10"
+  when: ( ansible_distribution_version == "15.04" or ansible_distribution_version == "15.10" or ansible_os_family == 'Ibm_powerkvm' ) and neutron.mech_driver == 'linuxbridge'
 
-- name: install neutron-linuxbridge-agent service for ubuntu 15.04 and 15.10, Reload systemctl
+- name: install neutron-openvswitch-agent.service, Copy neutron-openvswitch-agent.service
+  copy: src=lib/systemd/system/neutron-openvswitch-agent.service dest=/lib/systemd/system/neutron-openvswitch-agent.service mode=0644
+  when: ( ansible_distribution_version == "15.04" or ansible_distribution_version == "15.10" or ansible_os_family == 'Ibm_powerkvm' ) and neutron.mech_driver == 'ovs'
+
+- name: Reload systemctl
   command: systemctl daemon-reload
-  when: ansible_distribution_version == "15.04" or ansible_distribution_version == "15.10"
+  when: ansible_distribution_version == "15.04" or ansible_distribution_version == "15.10" or ansible_os_family == 'Ibm_powerkvm'
 
 - name: trigger restart on upgrades
   debug:

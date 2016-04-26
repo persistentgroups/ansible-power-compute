@@ -1,0 +1,11 @@
+---
+nova_compute_packages:
+    - libvirt         
+    - libvirt-python  
+    - qemu-kvm      
+    - librbd1       
+    - iscsi-initiator-utils  
+    - libvirt-devel 
+    - genisoimage
+    - util-linux
+nbd_load_module_dest: /etc/modules-load.d/nbd.conf

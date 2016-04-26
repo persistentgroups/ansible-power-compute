@@ -1,0 +1,15 @@
+---
+neutron:
+  source:
+    system_dependencies:
+      - mysql
+      - mysql-devel
+      - mariadb-libs
+
+nova:
+  source:
+    system_dependencies:
+      - python-XStatic-JQuery-TableSorter
+      - mysql-devel
+      - libvirt-python
+

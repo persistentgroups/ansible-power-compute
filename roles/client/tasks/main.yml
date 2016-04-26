@@ -1,12 +1,12 @@
 ---
+- include_vars: "{{ ansible_os_family }}.yml"
+
 - name: openstack creds
   template: src=root/stackrc dest=/root/stackrc
   when: client.write_stackrc|bool
 
 - name: install required packages for clients
-  apt:
-    name: "{{ item }}"
-    state: present
+  action: "{{ ansible_pkg_mgr }} name={{ item }}  state=present"
   with_items: "{{ client.apt_packages }}"
 
 - name: install openstack clients
@@ -20,6 +20,7 @@
         dest=/usr/local/lib/python2.7/dist-packages/requests/cacert.pem
         owner=root
         mode=0644 state=link force=yes
+  when: ansible_os_family != "Ibm_powerkvm"
 
 - name: migrate neutron services script
   template: src=usr/local/bin/migrate_neutron_services

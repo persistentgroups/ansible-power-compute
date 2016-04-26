@@ -1,0 +1,56 @@
+---
+python_dependencies_list:
+    - python-pip
+    - libxml2-python
+    - python-lxml
+    - python-greenlet
+    - pyOpenSSL
+    - python-devel
+    - python-httplib2
+    - python-virtualenv
+    - MySQL-python
+    - python-jinja2
+    - cryptsetup
+    - libffi-devel
+    - openssl-devel
+    - libxml2-devel
+    - libxslt-devel
+
+system_tools_list:
+#    - epel-release
+    - acl
+    - audit  
+    - curl
+    - dstat
+    - ethtool
+    - git
+    - htop
+    - iftop
+    - iotop
+    - iperf
+    - ltrace
+    - nc  
+    - pv
+    - ruby
+    - ruby-devel
+    - smem
+    - socat
+    - tree
+    - vim-minimal
+    - cdpr
+    - sysstat
+    - logrotate
+    - ntp
+    - vconfig
+    - lvm2
+    - libselinux-python
+    - "'@Development tools'"
+    - "'@Development-Tools-Basic'"
+
+lm_sensors_pkg: lm_sensors
+update_ca_certs: update-ca-trust
+password_policy_dest: /etc/pam.d/system-auth
+load_vlan_module_dest: /etc/modules-load.d/vconfig.conf
+update_grub: /usr/sbin/grub2-mkconfig
+timezone_update: "timedatectl set-timezone `cat /etc/timezone`"
+ntp_service: ntpd

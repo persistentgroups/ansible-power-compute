@@ -1,63 +1,47 @@
 ---
 - name: remove older libruby
-  apt: pkg=libruby1.8 purge=yes state=absent
+  action: "{{ ansible_pkg_mgr }} name=libruby1.8 state=absent"
+
+- name: get  epel repo rpm  
+  get_url: url="http://dl.fedoraproject.org/pub/epel/7/ppc64le/e/epel-release-7-6.noarch.rpm"
+           dest="/tmp/"
+  when: ansible_os_family == "Ibm_powerkvm"
+
+- name: enable epel repo 
+  yum: name=/tmp/epel-release-7-6.noarch.rpm state=present
+  when: ansible_os_family == "Ibm_powerkvm"
+
 
 - name: install system tools
-  apt: pkg={{ item }}
+  action: "{{ ansible_pkg_mgr }} name={{ item }}"
   with_items:
-    - acl
-    - auditd
-    - build-essential
-    - curl
-    - dstat
-    - ethtool
-    - git
-    - htop
-    - iftop
-    - iotop
-    - iperf
-    - ltrace
-    - mtr
-    - netcat
-    - pv
-    - ruby
-    - ruby-dev
-    - smem
-    - socat
-    - tree
-    - vim
-    - cdpr
-    - sysstat
-    - logrotate
-    - ntp
-    - vlan
-    - lvm2
-    - libpam-cracklib
+    - "{{ system_tools_list }}"  
 
 - name: install tools for x86
-  apt: pkg={{ item }}
+  action: "{{ ansible_pkg_mgr }} name= {{ item }}"
   with_items:
-    - ack-grep
+    - "{{ ack_tool }}"
   when: ansible_architecture != "ppc64le"
 
 - name: load vlan module
-  lineinfile: dest=/etc/modules
+  lineinfile: dest={{ load_vlan_module_dest }} create=yes
               line="8021q"
+  when: ansible_os_family != "Ibm_powerkvm"
 
 - name: install mcelog package
-  apt: pkg=mcelog
-  when: common.system_tools.mcelog|bool
+  action: "{{ ansible_pkg_mgr }} name=mcelog"
+  when: common.system_tools.mcelog|bool and ansible_architecture != "ppc64le"
 
 # http://www.supermicro.com/support/faqs/faq.cfm?faq=14537
 - name: blacklist mei
-  lineinfile: dest=/etc/modprobe.d/blacklist.conf
+  lineinfile: dest=/etc/modprobe.d/blacklist.conf create=yes
               line="blacklist {{ item }}"
   with_items:
     - mei
     - mei_me
 
 - name: install lm-sensors package
-  apt: name=lm-sensors state=present update_cache=yes
+  action: "{{ ansible_pkg_mgr }} name={{ lm_sensors_pkg }}  state=present update_cache=yes"
   notify:
     - load sensors
 

@@ -1,0 +1,12 @@
+---
+neutron:
+  source:
+    system_dependencies:
+      - libmysqlclient-dev 
+
+nova:
+  source:
+    system_dependencies:   
+      - libjs-jquery-tablesorter
+      - libmysqlclient-dev
+      - python-libvirt

@@ -1,4 +1,6 @@
 ---
+- include_vars: "{{ ansible_os_family }}.yml"
+
 # FIXME(cmt): for whatever reason the PPA doesnt like the signature on openvswitch-datapath-dkms
 # Linux 3.13 and later include the OVS datapath
 - name: force install of ovs dkms
@@ -6,12 +8,17 @@
   when: ansible_distribution_version == "12.04"
 
 - name: install other ovs packages
-  apt: pkg={{ item }}
+  action: "{{ ansible_pkg_mgr }} name={{ item }}"
   with_items:
-    - openvswitch-switch
-    - vlan
-    - bridge-utils
+    - "{{ ovs_packages }}"
+
+- name: Enable openvswitch on PowerKVM
+  command: "systemctl enable openvswitch.service"
+  when: ansible_os_family == "Ibm_powerkvm"
+
+- name: Start openvswitch service on PowerKVM
+  command: "systemctl start openvswitch.service"
+  when: ansible_os_family == "Ibm_powerkvm"
 
 - name: ovs int bridge
   ovs_bridge: name=br-int state=present
-

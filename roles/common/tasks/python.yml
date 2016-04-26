@@ -21,7 +21,7 @@
   when: ansible_distribution_version == "12.04" and openstack.pypi_mirror is not defined
 
 - name: uninstall python-setuptools
-  apt: pkg=python-setuptools state=absent
+  action: "{{ ansible_pkg_mgr }} name=python-setuptools state=absent"
   when: common.setuptools_version != "system"
 
 - name: install pip setuptools

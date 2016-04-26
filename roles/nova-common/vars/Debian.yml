@@ -1,0 +1,10 @@
+---
+nova:
+  install_packages:
+    - python-numpy
+    - virt-top
+  source:
+    system_dependencies:
+        - libjs-jquery-tablesorter
+        - libmysqlclient-dev
+        - python-libvirt

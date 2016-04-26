@@ -1,9 +1,10 @@
 ---
+- include_vars: "{{ ansible_os_family }}.yml"
+
 - name: install common neutron packages
-  apt: pkg={{ item }}
+  action: "{{ ansible_pkg_mgr }} name={{ item }}"
   with_items:
-    - vlan
-    - bridge-utils
+    - "{{ neutron_packages }}"
 
 - name: configure VXLAN to use IANA assigned port 4789
   copy: content="options vxlan udp_port=4789"

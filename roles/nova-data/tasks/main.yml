@@ -1,4 +1,6 @@
 ---
+- include_vars: "{{ ansible_os_family }}.yml"
+
 - include: ssh.yml
   when: nova.enable_ssh|bool
   tags:
@@ -14,7 +16,7 @@
   when: nova.compute_driver == "novadocker.virt.docker.DockerDriver"
 
 - name: install nova data plan requirements
-  apt: pkg=sysfsutils
+  action: "{{ ansible_pkg_mgr }} name=sysfsutils"
 
 - name: nova instances directory
   file:
@@ -23,7 +25,7 @@
     owner: nova
 
 - name: nbd module
-  lineinfile: dest=/etc/modules line="nbd"
+  lineinfile: dest="{{ nbd_load_module_dest }}" line="nbd" create=yes
 
 - name: probe nbd
   modprobe: name=nbd state=present
@@ -53,14 +55,15 @@
 - name: install nova-compute service
   upstart_service: name=nova-compute user=nova cmd=/usr/local/bin/nova-compute
                    config_dirs=/etc/nova
+  when: ansible_os_family != "Ibm_powerkvm"
 
-- name: install nova-compute service for ubuntu 15.04 and 15.10, Copy nova-compute.service
+- name: install nova-compute service for ubuntu 15.04 and 15.10 and Ibm_powerkvm, Copy nova-compute.service
   copy: src=lib/systemd/system/nova-compute.service dest=/lib/systemd/system/nova-compute.service mode=0644
-  when: ansible_distribution_version == "15.04" or ansible_distribution_version == "15.10"
+  when: ansible_distribution_version == "15.04" or ansible_distribution_version == "15.10" or ansible_os_family == "Ibm_powerkvm"
 
-- name: install nova-compute service for ubuntu 15.04 and 15.10, Reload systemctl
+- name: install nova-compute service for ubuntu 15.04 and 15.10 and Ibm_powerkvm, Reload systemctl
   command: systemctl daemon-reload
-  when: ansible_distribution_version == "15.04" or ansible_distribution_version == "15.10"
+  when: ansible_distribution_version == "15.04" or ansible_distribution_version == "15.10" or ansible_os_family == "Ibm_powerkvm"
 
 - name: trigger restart on upgrades
   debug:

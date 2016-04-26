@@ -1,14 +1,16 @@
 ---
+- include_vars: "{{ ansible_os_family }}.yml"
+
 - name: install project system dependencies
-  apt: pkg={{ item }}
+  action: "{{ ansible_pkg_mgr }} name={{ item }}"
   with_items: "{{ openstack_source.system_dependencies }}"
-  
 
 - name: "get {{ project_name }} source repo"
   git: repo="{{ openstack_source.git_mirror }}/{{ project_name }}.git"
        dest="/opt/stack/{{ project_name }}"
        version="{{ openstack_source.project_rev }}"
        update="{{ openstack_source.git_update }}"
+
   register: git_result
   until: git_result|success
   retries: 3

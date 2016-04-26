@@ -1,41 +1,22 @@
 ---
+- include_vars: "{{ ansible_os_family }}.yml"
+
 - name: set hostname
   hostname: name={{ hostname }}
   when: hostname is defined
 
-- name: ubuntu apt source list
-  template: src=etc/apt/sources.list dest=/etc/apt/sources.list
-  when: openstack.ubuntu_mirror is defined
-  notify:
-    - update apt index
-
 - meta: flush_handlers
 
-- name: update apt index
-  apt: update_cache=yes cache_valid_time=3600
+- name: update package index
+  action: "{{ ansible_pkg_mgr }} name=* update_cache=yes"
   tags: ['prereboot']
-
+  
 - include: system-tools.yml
 
 - name: python dependencies
-  apt: pkg={{ item }}
+  action: "{{ ansible_pkg_mgr }} name={{ item }} "
   with_items:
-    - python-pip
-    - python-libxml2
-    - python-lxml
-    - python-greenlet
-    - python-openssl
-    - python2.7-dev
-    - python-httplib2
-    - python-software-properties
-    - python-virtualenv
-    - python-mysqldb
-    - python-jinja2
-    - cryptsetup
-    - libffi-dev
-    - libssl-dev
-    - libxml2-dev
-    - libxslt1-dev
+    - "{{ python_dependencies_list }}" 
 
 - include: python.yml
   tags: pip, python
@@ -58,35 +39,16 @@
 
 - include: networking.yml
 
-- include: password-policy.yml
-
 - include: system-file-permissions.yml
-
-- include: ufw.yml
-  tags: ufw
 
 - include: ntp.yml
   tags: ntp
 
-# Include serial console before kernel-tuning to build serial_console_cmdline
-- include: serial-console.yml tty={{ common.serial_console.name }}
-  when: common.serial_console.enabled | bool
-  tags: ['prereboot']
-  when: ansible_distribution_version != "15.10" and ansible_distribution_version != "15.04"
-
-- include: kernel-tuning.yml
-  tags: ['prereboot']
-
 - include: disable-swap.yml
 
 - name: remove unwanted packages
-  apt:
-    name: "{{ item }}"
-    state: absent
+  action: "{{ ansible_pkg_mgr }} name={{ item }} state=absent"
   with_items: "{{ common.packages_to_remove }}"
-
 
 - name: include stack name in /etc/issue
   lineinfile: dest=/etc/issue regexp="^{{ stack_env }} OpenStack Node" line="{{ stack_env }} OpenStack Node"
-
-

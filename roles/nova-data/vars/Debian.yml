@@ -1,0 +1,12 @@
+---
+nova_compute_packages:
+    - cpu-checker
+    - libvirt-bin
+    - python-libvirt
+    - qemu-kvm
+    - open-iscsi
+    - libvirt-dev
+    - pkg-config
+    - genisoimage
+    - util-linux
+nbd_load_module_dest: /etc/modules 

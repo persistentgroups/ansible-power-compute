@@ -1,0 +1,5 @@
+---
+ovs_packages:
+  - openvswitch-switch
+  - vlan
+  - bridge-utils
