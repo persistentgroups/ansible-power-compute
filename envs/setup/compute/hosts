@@ -4,8 +4,5 @@ controller1
 [db_arbiter]
 compute1
 
-[mongo_arbiter]
-compute1
-
 [compute]
 compute1
