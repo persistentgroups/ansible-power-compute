@@ -1,32 +1,64 @@
 ---
-stack_env: compute
 
 fqdn: controller
 
-undercloud_floating_ip: 10.233.53.111 # Controller_IP
+undercloud_floating_ip: 172.29.161.145 # Controller_IP
 undercloud_cidr:
   - 10.233.53.0/20
 
-primary_interface_controller: 'ansible_eth0'
-primary_interface_compute: 'ansible_eth0'
+primary_interface_controller: 'ansible_em2'
+primary_interface_compute: 'ansible_eth6'
 
 openstack:
  controller_ips:
-   - 10.233.53.111 # Controller_IP
+   - 172.29.161.145
 
 identity_api_version: 3
 
 endpoints:
   auth_uri: http://{{ fqdn }}:35357
+  keystone:
+    name: keystone
+    type: identity
+    description: 'Identity Service'
+    version: v2.0
+    url:
+      internal: http://{{ fqdn }}:5000
+      public: http://{{ fqdn }}:5000
+      admin: http://{{ fqdn }}:35357
+    port:
+      backend_api: 5000
+
+  neutron:
+    name: neutron
+    type: network
+    description: 'Network Service'
+    url:
+      admin: http://{{ fqdn }}:9696
+      internal: http://{{ fqdn }}:9696
+      public: http://{{ fqdn }}:9696
+    port:
+      backend_api: 9696
+
+  nova:
+    name: nova
+    type: compute
+    description: Compute Service
+    version: v2
+    url:
+      admin: http://{{ fqdn }}:8774
+      internal: http://{{ fqdn }}:8774
+      public: http://{{ fqdn }}:8774
+      path: v2/%(tenant_id)s
 
 secrets:
-  nova_db_password:      NOVA_DBPASS
-  nova_service_password: nova_pass
-  rabbit_password:  RABBIT_PASS
-  admin_password:   admin
-  metadata_proxy_shared_secret: metadata_pass
-  neutron_db_password: NEUTRON_DBPASS
-  neutron_service_password: neutron_pass
+  nova_db_password:      abcd
+  nova_service_password: abcd
+  rabbit_password:  abcd
+  admin_password:   abcd
+  metadata_proxy_shared_secret: abcd
+  neutron_db_password: abcd
+  neutron_service_password: abcd
 neutron:
   source:
     rev: 'stable/kilo'
