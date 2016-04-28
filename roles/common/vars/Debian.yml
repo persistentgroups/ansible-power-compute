@@ -55,3 +55,4 @@ load_vlan_module_dest:  /etc/modules
 update_grub: /usr/sbin/update-grub
 timezone_update: "dpkg-reconfigure --frontend noninteractive tzdata"
 ntp_service: ntp
+ssh_service: ssh

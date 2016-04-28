@@ -13,6 +13,8 @@ openstack:
  controller_ips:
    - 172.29.161.145
 
+admin_tenant_name: admin
+
 identity_api_version: 3
 
 endpoints:

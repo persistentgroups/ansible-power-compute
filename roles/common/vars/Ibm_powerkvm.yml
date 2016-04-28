@@ -54,3 +54,4 @@ load_vlan_module_dest: /etc/modules-load.d/vconfig.conf
 update_grub: /usr/sbin/grub2-mkconfig
 timezone_update: "timedatectl set-timezone `cat /etc/timezone`"
 ntp_service: ntpd
+ssh_service: sshd

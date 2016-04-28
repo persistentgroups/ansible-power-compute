@@ -12,4 +12,4 @@ nova:
       - python-XStatic-JQuery-TableSorter
       - mysql-devel
       - libvirt-python
-
+update_ca_certs: update-ca-trust

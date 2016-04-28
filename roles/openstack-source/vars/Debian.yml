@@ -10,3 +10,4 @@ nova:
       - libjs-jquery-tablesorter
       - libmysqlclient-dev
       - python-libvirt
+update_ca_certs: update-ca-certs

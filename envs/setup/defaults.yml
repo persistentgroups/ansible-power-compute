@@ -20,6 +20,8 @@ etc_hosts:
 
 openstack_package_path: /opt/openstack/current
 
+admin_tenant_name: service
+
 # Keystone version
 identity_version: 2
 
