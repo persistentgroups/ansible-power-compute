@@ -1,5 +1,6 @@
 ---
 neutron:
+  state_path: "{{ state_path_base }}/neutron" 
   l2_population: False
   vxlan:
     # The multicast prefix to use for broadcast, multicast and unknown frames

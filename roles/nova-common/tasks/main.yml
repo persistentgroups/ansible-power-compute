@@ -49,6 +49,9 @@
   notify:
     - restart nova services
 
+- name: create symlink for nova-rootwrap in /usr/bin
+  file: src=/usr/local/bin/nova-rootwrap dest=/usr/bin/nova-rootwrap state=link
+
 - name: nova sudoer
   template: |
     src=etc/sudoers.d/nova

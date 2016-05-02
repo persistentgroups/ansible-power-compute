@@ -1,0 +1,17 @@
+[Unit]
+Description=OpenStack Compute
+After=libvirtd.service postgresql.service mysql.service keystone.service rabbitmq-server.service ntp.service neutron-ovs-cleanup.service
+
+[Service]
+User=nova
+Group=nova
+WorkingDirectory= {{ nova.state_path }}
+PermissionsStartOnly=true
+ExecStartPre=/bin/mkdir -p {{ nova.state_path }}/lock  /var/log/nova {{ nova.state_path }}
+ExecStartPre=/bin/chown nova:nova  {{ nova.state_path }}/lock  /var/log/nova {{ nova.state_path }}
+ExecStart=/usr/local/bin/nova-compute --config-dir /etc/nova  --config-file /etc/nova/nova.conf --log-file /var/log/nova/nova-compute.log
+Restart=on-failure
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

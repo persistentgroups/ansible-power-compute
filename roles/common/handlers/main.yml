@@ -1,6 +1,6 @@
 ---
 - name: update timezone
-  command: "timedatectl set-timezone `cat /etc/timezone`"  #"{{ timezone_update }}"
+  shell: "timedatectl set-timezone `cat /etc/timezone`"  #"{{ timezone_update }}"
 
 - name: refresh CAs
   command: "{{ update_ca_certs }}" 
