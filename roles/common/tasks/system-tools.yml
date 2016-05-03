@@ -18,7 +18,7 @@
     - "{{ system_tools_list }}"  
 
 - name: install tools for x86
-  action: "{{ ansible_pkg_mgr }} name= {{ item }}"
+  action: "{{ ansible_pkg_mgr }} name={{ item }}"
   with_items:
     - "{{ ack_tool }}"
   when: ansible_architecture != "ppc64le"

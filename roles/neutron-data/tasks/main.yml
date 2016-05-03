@@ -11,11 +11,6 @@
   with_items:
     - "{{ iproute_pkg }}"
 
-- name: permit VXLAN traffic
-#  ufw: rule=allow to_port=4789 proto=udp
-  firewalld: port=4789/udp permanent=true state=enabled
-  tags: ufw
-  when: neutron.plugin == 'ml2' and 'vxlan' in neutron.tunnel_types
 
 - name: ml2 dataplane config
   template: src=etc/neutron/plugins/ml2/ml2_plugin_dataplane.ini

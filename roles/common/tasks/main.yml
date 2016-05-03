@@ -7,9 +7,15 @@
 
 - meta: flush_handlers
 
-- name: update package index
-  action: "{{ ansible_pkg_mgr }} name=* update_cache=yes"
+- name: update package index apt
+  apt: update_cache=yes cache_valid_time=3600
   tags: ['prereboot']
+  when: ansible_pkg_mgr == "apt"
+
+- name: update package index yum
+  yum: name=* update_cache=yes state=latest
+  tags: ['prereboot']
+  when: ansible_pkg_mgr == "yum"
   
 - include: system-tools.yml
 

@@ -19,5 +19,9 @@
 - name: load sensors
   shell: /usr/sbin/sensors-detect < /dev/null
 
-- name: update  index
-  action: "{{ ansible_pkg_mgr }} name=* update_cache=yes"
+- name: update package index apt
+  apt: update_cache=yes cache_valid_time=3600
+
+- name: update package index yum
+  yum: name=* update_cache=yes state=latest
+

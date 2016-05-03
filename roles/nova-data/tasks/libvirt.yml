@@ -21,6 +21,10 @@
   notify: restart nova services
   when: ansible_distribution_version == "12.04"
 
+- name: install qemu-system-ppc package on ubuntu trusty for  ppc64le 
+  apt: pkg=qemu-system-ppc
+  when: ansible_distribution_version == "14.04" and  ansible_architecture == "ppc64le"
+
 - name: install nova-compute packages (trusty and powerkvm)
   action: "{{ ansible_pkg_mgr }} name={{ item }}"
   with_items:
