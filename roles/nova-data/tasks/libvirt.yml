@@ -125,5 +125,5 @@
   when: ansible_os_family == "Ibm_powerkvm"
 
 - name:  rule for libvirtd group members to access libvirt
-  template: src=etc/polkit-1/localauthority/50-local.d/50-org.libvirt-group-access.pkla dest=/etc/polkit-1/localauthority/50-local.d/50-org.libvirt-group-access.pkla owner=root group=root mode=0644
+  file: src=etc/polkit-1/localauthority/50-local.d/50-org.libvirt-group-access.pkla dest=/etc/polkit-1/localauthority/50-local.d/50-org.libvirt-group-access.pkla owner=root group=root mode=0644
   when: ansible_os_family == "Ibm_powerkvm"
