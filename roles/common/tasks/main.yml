@@ -13,7 +13,7 @@
   when: ansible_pkg_mgr == "apt"
 
 - name: update package index yum
-  yum: name=* update_cache=yes state=latest
+  yum: name=* update_cache=yes 
   tags: ['prereboot']
   when: ansible_pkg_mgr == "yum"
   
