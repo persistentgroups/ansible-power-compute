@@ -73,7 +73,6 @@ neutron:
     enable: False
   l2_population: False
   allow_overlapping_ips: False
-  enable_external_interface: False
   l3ha:
     enabled: False
  # bridge_mappings: physnet:eth0
