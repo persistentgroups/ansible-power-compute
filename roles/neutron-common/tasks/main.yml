@@ -68,8 +68,18 @@
   template: src={{ item }} dest=/etc/neutron mode={{ 0644 if 'policy.json' in item else 0640 }}
             owner=neutron group=neutron
   with_fileglob: ../templates/etc/neutron/*
-  notify:
-     - restart neutron services
+
+- name: trigger openvswitch service restart
+  debug:
+    msg: "Triggering openvswitch service restart"
+  notify: restart neutron openvswitch service
+  when: neutron.mech_driver == 'ovs'
+  
+- name: trigger linuxbridge service restart
+  debug:
+    msg: "Triggering linuxbridge service restart"
+  notify: restart neutron linuxbridge service
+  when: neutron.mech_driver == 'linuxbridge'
 
 - name: neutron rootwrap filters
   template:
@@ -90,8 +100,12 @@
   template: src=etc/neutron/plugins/ml2/ml2_plugin.ini
             dest=/etc/neutron/plugins/ml2/ml2_plugin.ini
             mode=0644
-  notify:
-    - restart neutron services
+
+- name: trigger linuxbridge service restart
+  debug:
+    msg: "Triggering linuxbridge service restart"
+  notify: restart neutron linuxbridge service
+  when: neutron.mech_driver == 'linuxbridge'
 
 - name: ovs plugin dir
   file: dest=/etc/neutron/plugins/openvswitch state=directory
@@ -102,8 +116,12 @@
             dest=/etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini
             mode=0644
   when: neutron.plugin == 'ml2' and neutron.mech_driver == 'ovs'
-  notify:
-    - restart neutron services
+
+- name: trigger openvswitch service restart
+  debug:
+    msg: "Triggering openvswitch service restart"
+  notify: restart neutron openvswitch service
+  when: neutron.mech_driver == 'ovs'
 
 - name: neutron stop all script
   template: src=usr/local/bin/neutron-stop-all
