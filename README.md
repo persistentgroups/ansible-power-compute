@@ -54,8 +54,14 @@ Provide compute node configurations in `envs/setup/compute/group_vars/all.yml`
   |     controller_ips:             |    Controller IPs                       |
   |         - <controller-ip>       |                                         |
   |  admin_tenant_name              |   Tenant to which nova user is added.   |
-                                        Refer below parameter in nova.conf of |
+                                    |   Refer below parameter in nova.conf of |
                                         control plane.
+  |   endpoints.auth_uri            | Refer keystone endpoints and override the    
+      http://{{ fqdn }}:35357        corresponding urls. 
+  |                                 |     (default values are provided at    
+                                       roles/endpoints/defaults/main.yml ). 
+  |                                 |
+    
   |  identity_api_version           |  keystone identity api version          |
                                                                               |
   |  Secrets:                       |      Refer nova.conf and neutron.conf for     
@@ -97,8 +103,9 @@ Provide compute node configurations in `envs/setup/compute/group_vars/all.yml`
   |  libvirt_type: kvm               |     libvirt domain type                |
   |  ssl.crt                         |   SSL certificate used at controller   |
 ```
-#### 4. Enable ssh login without password
+#### 2. Enable ssh login without password
 Ref#: http://www.tecmint.com/ssh-passwordless-login-using-ssh-keygen-in-5-easy-steps
 
-#### 5. Start the deployment
+#### 3. Start the deployment
 `ansible-playbook -i envs/setup/compute/hosts compute.yml`
+
