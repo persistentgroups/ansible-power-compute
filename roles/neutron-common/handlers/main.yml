@@ -1,7 +1,13 @@
 ---
-- name: restart neutron services
+- name: restart neutron openvswitch service
   service: name={{ item }} state=restarted_if_running must_exist=false
   when: restart|default('True')
   with_items:
     - neutron-openvswitch-agent
+
+- name: restart neutron linuxbridge service
+  service: name={{ item }} state=restarted_if_running must_exist=false
+  when: restart|default('True')
+  with_items:
     - neutron-linuxbridge-agent
+

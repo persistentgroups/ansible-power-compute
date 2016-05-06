@@ -17,8 +17,7 @@
             dest=/etc/neutron/plugins/ml2/ml2_plugin_dataplane.ini
             mode=0644
   when: neutron.plugin == 'ml2'
-  notify:
-    - restart neutron services
+
 
 - name: install neutron-linuxbridge-agent service
   upstart_service: name=neutron-linuxbridge-agent
@@ -49,13 +48,17 @@
   command: systemctl daemon-reload
   when: ansible_distribution_version == "15.04" or ansible_distribution_version == "15.10" or ansible_os_family == 'Ibm_powerkvm'
 
-- name: trigger restart on upgrades
+- name: trigger openvswitch service restart
   debug:
-    msg: "Triggering service restart for upgrade"
-  changed_when: True
-  notify: restart neutron services
-  when: (git_result.changed) and
-        upgrade | default('False') | bool
+    msg: "Triggering openvswitch service restart"
+  notify: restart neutron openvswitch service
+  when: neutron.mech_driver == 'ovs'
+  
+- name: trigger linuxbridge service restart
+  debug:
+    msg: "Triggering linuxbridge service restart"
+  notify: restart neutron linuxbridge service
+  when: neutron.mech_driver == 'linuxbridge'
 
 - meta: flush_handlers
 
