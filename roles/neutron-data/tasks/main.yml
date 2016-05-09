@@ -37,11 +37,11 @@
   when: neutron.plugin == 'ml2' and neutron.mech_driver == 'ovs' and ansible_os_family == "Debian"
 
 - name: install neutron-linuxbridge-agent service, Copy neutron-linuxbridge-agent.service
-  copy: src=lib/systemd/system/neutron-linuxbridge-agent.service dest=/lib/systemd/system/neutron-linuxbridge-agent.service mode=0644
+  template: src=lib/systemd/system/neutron-linuxbridge-agent.service dest=/lib/systemd/system/neutron-linuxbridge-agent.service mode=0644
   when: ( ansible_distribution_version == "15.04" or ansible_distribution_version == "15.10" or ansible_os_family == 'Ibm_powerkvm' ) and neutron.mech_driver == 'linuxbridge'
 
 - name: install neutron-openvswitch-agent.service, Copy neutron-openvswitch-agent.service
-  copy: src=lib/systemd/system/neutron-openvswitch-agent.service dest=/lib/systemd/system/neutron-openvswitch-agent.service mode=0644
+  template: src=lib/systemd/system/neutron-openvswitch-agent.service dest=/lib/systemd/system/neutron-openvswitch-agent.service mode=0644
   when: ( ansible_distribution_version == "15.04" or ansible_distribution_version == "15.10" or ansible_os_family == 'Ibm_powerkvm' ) and neutron.mech_driver == 'ovs'
 
 - name: Reload systemctl
