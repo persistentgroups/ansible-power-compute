@@ -62,8 +62,6 @@ secrets:
   neutron_db_password: abcd
   neutron_service_password: abcd
 neutron:
-  source:
-    rev: 'stable/kilo'
   plugin: ml2
   mech_driver: ovs
   tenant_network_type: vxlan
@@ -82,8 +80,6 @@ ceph:
   enabled: False
 
 nova:
-  source:
-    rev: 'stable/kilo'
   backend_ceph: False
   libvirt_type: kvm
   
