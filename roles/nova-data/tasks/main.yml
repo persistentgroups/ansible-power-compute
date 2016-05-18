@@ -7,7 +7,7 @@
     - ssh
 
 - include: libvirt.yml
-  when: nova.compute_driver == "nova.virt.libvirt.LibvirtDriver"
+  when: nova.compute_driver == "nova.virt.libvirt.LibvirtDriver" or nova.compute_driver == "libvirt.LibvirtDriver"
   tags:
     - libvirt
     - libvirtd
@@ -57,13 +57,13 @@
                    config_dirs=/etc/nova
   when: ansible_os_family != "Ibm_powerkvm"
 
-- name: install nova-compute service for ubuntu 15.04 and 15.10 and Ibm_powerkvm, Copy nova-compute.service
+- name: install nova-compute service for ubuntu 15.x,16.x and Ibm_powerkvm, Copy nova-compute.service
   template: src=lib/systemd/system/nova-compute.service dest=/lib/systemd/system/nova-compute.service mode=0644
-  when: ansible_distribution_version == "15.04" or ansible_distribution_version == "15.10" or ansible_os_family == "Ibm_powerkvm"
+  when: ansible_distribution_version == "15.04" or ansible_distribution_version == "15.10" or ansible_distribution_version == "16.04" or ansible_os_family == "Ibm_powerkvm"
 
-- name: install nova-compute service for ubuntu 15.04 and 15.10 and Ibm_powerkvm, Reload systemctl
+- name: install nova-compute service for ubuntu 15.x and 16.x and Ibm_powerkvm, Reload systemctl
   command: systemctl daemon-reload
-  when: ansible_distribution_version == "15.04" or ansible_distribution_version == "15.10" or ansible_os_family == "Ibm_powerkvm"
+  when: ansible_distribution_version == "15.04" or ansible_distribution_version == "15.10" or ansible_distribution_version == "16.04" or ansible_os_family == "Ibm_powerkvm"
 
 - name: trigger restart on upgrades
   debug:

@@ -38,15 +38,15 @@
 
 - name: install neutron-linuxbridge-agent service, Copy neutron-linuxbridge-agent.service
   template: src=lib/systemd/system/neutron-linuxbridge-agent.service dest=/lib/systemd/system/neutron-linuxbridge-agent.service mode=0644
-  when: ( ansible_distribution_version == "15.04" or ansible_distribution_version == "15.10" or ansible_os_family == 'Ibm_powerkvm' ) and neutron.mech_driver == 'linuxbridge'
+  when: ( ansible_distribution_version == "15.04" or ansible_distribution_version == "15.10" or ansible_distribution_version == "16.04" or ansible_os_family == 'Ibm_powerkvm' ) and neutron.mech_driver == 'linuxbridge'
 
 - name: install neutron-openvswitch-agent.service, Copy neutron-openvswitch-agent.service
   template: src=lib/systemd/system/neutron-openvswitch-agent.service dest=/lib/systemd/system/neutron-openvswitch-agent.service mode=0644
-  when: ( ansible_distribution_version == "15.04" or ansible_distribution_version == "15.10" or ansible_os_family == 'Ibm_powerkvm' ) and neutron.mech_driver == 'ovs'
+  when: ( ansible_distribution_version == "15.04" or ansible_distribution_version == "15.10" or ansible_distribution_version == "16.04" or ansible_os_family == 'Ibm_powerkvm' ) and neutron.mech_driver == 'ovs'
 
 - name: Reload systemctl
   command: systemctl daemon-reload
-  when: ansible_distribution_version == "15.04" or ansible_distribution_version == "15.10" or ansible_os_family == 'Ibm_powerkvm'
+  when: ansible_distribution_version == "15.04" or ansible_distribution_version == "15.10" or ansible_distribution_version == "16.04"  or ansible_os_family == 'Ibm_powerkvm'
 
 - name: trigger openvswitch service restart
   debug:

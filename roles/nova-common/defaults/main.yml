@@ -1,7 +1,7 @@
 ---
 nova:
   patches:
-  compute_driver: nova.virt.libvirt.LibvirtDriver
+  compute_driver: libvirt.LibvirtDriver
   firewall_driver: nova.virt.firewall.NoopFirewallDriver
   scheduler_host_manager: nova.scheduler.host_manager.HostManager
   compute_manager: nova.compute.manager.ComputeManager
@@ -36,11 +36,11 @@ nova:
     - virt-top
   driver:
     docker:
-      rev: 'stable/kilo'
+      rev: 'stable/mitaka'
       git_mirror: https://github.com/stackforge/nova-docker.git
       dest: /opt/stack/novadocker
   source:
-    rev: 'stable/kilo'
+    rev: 'stable/mitaka'
     python_dependencies:
       - { name: mysql-python }
       - { name: python-memcached }
@@ -50,7 +50,6 @@ nova:
   alternatives:
     - nova-all
     - nova-api
-    - nova-api-ec2
     - nova-api-metadata
     - nova-api-os-compute
     - nova-cells
@@ -64,7 +63,6 @@ nova:
     - nova-manage
     - nova-network
     - nova-novncproxy
-    - nova-objectstore
     - nova-rootwrap
     - nova-scheduler
     - nova-serialproxy
