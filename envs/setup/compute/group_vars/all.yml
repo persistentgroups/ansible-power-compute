@@ -75,7 +75,7 @@ neutron:
     enabled: False
  # bridge_mappings: physnet:eth0
   network_vlan_ranges: physnet:925:925
-
+  enable_flat_networks: True
 ceph:
   enabled: False
 
