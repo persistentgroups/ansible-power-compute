@@ -75,6 +75,7 @@ nova:
   libvirt_type: kvm
   backend_ceph: False
 
+validate_certs: True
 ssl:
   crt: |
     -----BEGIN CERTIFICATE-----
