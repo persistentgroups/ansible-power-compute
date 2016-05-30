@@ -6,3 +6,6 @@ compute1
 
 [compute]
 compute1
+
+[ceph_monitors]
+monitor1

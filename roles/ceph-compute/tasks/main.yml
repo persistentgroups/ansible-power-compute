@@ -4,29 +4,31 @@
     path: /etc/ceph
     state: directory
 
-- name: create client.cinder.key
-  shell: ceph auth get-key client.cinder > /etc/ceph/client.cinder.key
-         creates=/etc/ceph/client.cinder.key
+- name: create client.nova.key
+  shell: ceph auth get-key client.nova > /etc/ceph/client.nova.key
+         creates=/etc/ceph/client.nova.key
   run_once: true
   delegate_to: "{{ groups['ceph_monitors'][0] }}"
+  become: yes
+  become_user: root
 
-- name: fetch client.cinder.key
-  slurp: path=/etc/ceph/client.cinder.key
+- name: fetch client.nova.key
+  slurp: path=/etc/ceph/client.nova.key
   run_once: true
   delegate_to: "{{ groups['ceph_monitors'][0] }}"
-  register: client_cinder_key
+  register: client_nova_key
 
-- name: write client.cinder.key
+- name: write client.nova.key
   copy:
-    dest: /etc/ceph/client.cinder.key
-    content: "{{ client_cinder_key['content'] | b64decode }}"
+    dest: /etc/ceph/client.nova.key
+    content: "{{ client_nova_key['content'] | b64decode }}"
 
 # used in secret.xml
 - name: fetch contents of uuid file
-  slurp: path=/etc/ceph/cinder_uuid
+  slurp: path=/etc/ceph/nova_uuid
   run_once: true
   delegate_to: "{{ groups['ceph_monitors'][0] }}"
-  register: cinder_uuid_file
+  register: nova_uuid_file
 
 - name: generate ceph secret xml file
   template: src=etc/ceph/secret.xml
@@ -39,4 +41,4 @@
   shell: virsh secret-define --file /etc/ceph/secret.xml
 
 - name: set virsh secret
-  shell: "virsh secret-set-value --secret {{ cinder_uuid_file.content | b64decode }} --base64 $(cat /etc/ceph/client.cinder.key)"
+  shell: "virsh secret-set-value --secret {{ nova_uuid_file.content | b64decode }} --base64 $(cat /etc/ceph/client.nova.key)"
