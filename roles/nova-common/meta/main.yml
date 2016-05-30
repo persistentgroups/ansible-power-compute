@@ -15,4 +15,4 @@ dependencies:
     python_dependencies: "{{ nova.source.python_dependencies }}"
     when: openstack_install_method == 'source'
   - role: ceph-common
-    when: ceph.enabled|bool and nova.backend_ceph|bool
+    when:  nova.backend_ceph|bool

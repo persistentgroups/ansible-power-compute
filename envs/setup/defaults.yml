@@ -68,9 +68,6 @@ neutron:
       tenant_name: admin
       enable_snat: true
 
-ceph:
-  enabled: False
-  
 nova:
   libvirt_type: kvm
   backend_ceph: False

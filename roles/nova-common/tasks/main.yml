@@ -39,7 +39,7 @@
       permission: r
 
 - include: ceph_integration.yml
-  when: ceph.enabled|bool and nova.backend_ceph|bool
+  when: nova.backend_ceph|bool
 
 - name: nova config
   action: template src={{ item }} dest=/etc/nova mode={{ 0644 if 'policy.json' in item else 0640 }}
