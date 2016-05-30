@@ -78,6 +78,9 @@ neutron:
   enable_flat_networks: True
 ceph:
   enabled: False
+  pool_name: rbd
+
+validate_certs: False
 
 nova:
   backend_ceph: False
