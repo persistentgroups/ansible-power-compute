@@ -1,8 +1,2 @@
 ---
 dependencies:
-  - role: apt-repos
-    repos:
-      - repo: 'deb {{ apt_repos.ceph.repo }}{{ ceph.stable_release }}/ {{ ansible_lsb.codename }} main'
-        key_url: '{{ apt_repos.ceph.key_url }}'
-        validate_certs: "{{ validate_certs }}"
-    when: ansible_os_family == "Debian" and ansible_distribution_version !=  "15.10"
