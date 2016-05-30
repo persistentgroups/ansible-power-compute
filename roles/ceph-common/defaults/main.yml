@@ -1,9 +1,6 @@
 ---
 ceph:
 
-  enabled: false
-  stable_release: hammer
-
   # Packages
   debian_pkgs:
     - python-pycurl
