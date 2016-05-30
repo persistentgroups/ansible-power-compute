@@ -60,7 +60,7 @@ neutron:
   allow_overlapping_ips: True
   l3ha:
     enabled: False
-  bridge_mappings: '' # Should be empty for OVS
+  bridge_mappings: '' 
   network_vlan_ranges: physnet:925:925
 
   routers:
