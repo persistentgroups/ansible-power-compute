@@ -2,11 +2,10 @@
 ceph:
 
   # Packages
-  debian_pkgs:
+  reqd_pkgs:
     - python-pycurl
     - ntp
     - hdparm
-    - libvirt-bin
   ceph_pkgs:
     - ceph
     - ceph-common

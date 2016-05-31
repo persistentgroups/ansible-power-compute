@@ -33,7 +33,7 @@
   roles:
     - role: ceph-compute
       tags: ['ceph', 'ceph-compute']
-      when: ceph.enabled|bool
+      when: nova.backend_ceph|bool
   environment: "{{ env_vars|default({}) }}"
 
 - name: openvswitch
