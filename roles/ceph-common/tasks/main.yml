@@ -1,4 +1,6 @@
 ---
+- include_vars: "{{ ansible_os_family }}.yml"
+
 - name: create ceph directory
   file:
     path: /etc/ceph
@@ -18,8 +20,8 @@
       permission: r
 
 - name: install dependencies
-  action: "{{ ansible_pkg_mgr }} name={{ item }} state=present   update_cache=yes"
-  with_items: ceph.debian_pkgs
+  action: "{{ ansible_pkg_mgr }} name={{ item }} state=present"
+  with_items: ceph.reqd_pkgs
 
 - name: install ceph
   action: "{{ ansible_pkg_mgr }} name={{ item }} state=present"
