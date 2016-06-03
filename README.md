@@ -1,6 +1,9 @@
 ## Ansible playbooks for deploying Openstack Compute
 The ansible playbooks are used to add a compute node to an existing Openstack control plane.Currently tested on Ubuntu 14.04,Ubuntu 16.04 and PowerKVM3.1
 
+Detailed documentation on configurations is available at 
+[docs](https://github.com/persistentgroups/ansible-power-compute/tree/master/docs)
+
 ### Required Environment
 * Openstack control plane
 * Deployer node for running ansible playbooks
