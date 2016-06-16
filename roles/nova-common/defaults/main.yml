@@ -48,6 +48,7 @@ nova:
       - { name: kombu>=3.0.7 }
       - { name: amqp>=1.4.0 }
       - { name: pytz }
+      - { name: pbr>=1.8 }
       - { name: debtcollector }
       - { name: python-dateutil }
       - { name: monotonic }
@@ -61,6 +62,7 @@ nova:
       - { name: cliff }
       - { name: retrying }
       - { name: futurist }
+
   alternatives:
     - nova-all
     - nova-api

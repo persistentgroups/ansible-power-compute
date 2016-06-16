@@ -55,6 +55,8 @@ neutron:
     rev: 'stable/liberty'
     python_dependencies:
       - { name: mysql-python }
+      - { name: pbr>=1.8 }
+      - { name: pytz }
       - { name: "git+https://github.com/openstack/neutron-lbaas.git@stable/liberty#egg=neutron-lbaas" }
       - { name: jsonrpclib, version: "0.1.3" }
       - { name: kombu>=3.0.7 }
