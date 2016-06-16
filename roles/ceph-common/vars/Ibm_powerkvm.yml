@@ -3,7 +3,4 @@ ceph:
    reqd_pkgs:
       - libvirt
 
-   ceph_pkgs:
-      - ceph
-      - ceph-common
 
