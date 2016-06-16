@@ -7,7 +7,6 @@ ceph:
     - ntp
     - hdparm
   ceph_pkgs:
-    - ceph
     - ceph-common
   rbd_ceph_conf: /etc/ceph/ceph.conf
 
